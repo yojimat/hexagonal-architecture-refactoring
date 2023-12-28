@@ -1,4 +1,5 @@
-﻿using Hexagonal_Refactoring.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Hexagonal_Refactoring.Application.UseCases;
 using Microsoft.AspNetCore.Mvc;
 using Hexagonal_Refactoring.DTOs;
 using Hexagonal_Refactoring.Services;
@@ -12,23 +13,17 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     [HttpPost]
     public IActionResult Create([FromBody] CustomerDto dto)
     {
-        if (customerService.FindByCpf(dto.GetCpf()) != null)
+        try
         {
-            return UnprocessableEntity("Customer already exists");
-        }
+            var createCustomerUseCase = new CreateCustomerUseCase(customerService);
+            var output = createCustomerUseCase.Execute(new CreateCustomerUseCase.Input(dto.GetCpf(), dto.GetEmail(), dto.GetName()));
 
-        if (customerService.FindByEmail(dto.GetEmail()) != null)
+            return Created($"/customers/{output.Id}", output);
+        }
+        catch (ValidationException e)
         {
-            return UnprocessableEntity("Customer already exists");
+            return UnprocessableEntity(e.Message);
         }
-
-        var customer = new Customer();
-        customer.SetName(dto.GetName());
-        customer.SetCpf(dto.GetCpf());
-        customer.SetEmail(dto.GetEmail());
-        customer = customerService.Save(customer);
-
-        return Created($"/customers/{customer.GetId()}", new CustomerDto(customer));
     }
 
     [HttpGet("{id:long}")]

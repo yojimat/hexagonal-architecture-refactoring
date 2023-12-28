@@ -1,4 +1,6 @@
 ﻿using System.Net.Mime;
+using Hexagonal_Refactoring.Application.UseCases;
+
 namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerControllerTest
 {
     private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
@@ -25,17 +27,16 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as CustomerDto;
+        var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
         // Assert
         Assert.NotNull(exeResult); Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
 
         Assert.NotNull(exeResultValue);
-        Assert.Equal(exeResultValue.GetEmail(), _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.GetCpf(), _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.GetName(), _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.GetId(), _expectedCustomer.GetId());
-
+        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
+        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
+        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
+        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
     }
 
     [Fact(DisplayName = "Shouldn't create a client with duplicated CPF")]
@@ -47,7 +48,7 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as CustomerDto;
+        var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
         _customerDto.SetEmail("john2@gmail.com");
         _customerRepositoryMock.Setup(x =>
@@ -61,14 +62,14 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         // Assert
         Assert.NotNull(exeResultValue);
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
-        Assert.Equal(exeResultValue.GetEmail(), _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.GetCpf(), _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.GetName(), _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.GetId(), _expectedCustomer.GetId());
+        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
+        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
+        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
+        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
 
         Assert.NotNull(exeResult2);
         Assert.Equal(exeResult2.StatusCode, StatusCodes.Status422UnprocessableEntity);
-        Assert.Equal(exeResult2.Value, "Customer already exists");
+        Assert.Equal(exeResult2.Value, "Customer already exists.");
     }
 
     [Fact(DisplayName = "Shouldn't create a client with duplicated email")]
@@ -80,7 +81,7 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as CustomerDto;
+        var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
         _customerDto.SetCpf("22345678901");
         _customerRepositoryMock.Setup(x =>
@@ -94,14 +95,14 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         // Assert
         Assert.NotNull(exeResultValue);
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
-        Assert.Equal(exeResultValue.GetEmail(), _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.GetCpf(), _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.GetName(), _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.GetId(), _expectedCustomer.GetId());
+        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
+        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
+        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
+        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
 
         Assert.NotNull(exeResult2);
         Assert.Equal(exeResult2.StatusCode, StatusCodes.Status422UnprocessableEntity);
-        Assert.Equal(exeResult2.Value, "Customer already exists");
+        Assert.Equal(exeResult2.Value, "Customer already exists.");
     }
 
     [Fact(DisplayName = "Should get a client by id")]
@@ -116,20 +117,20 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         // Act
         var result = _controller.Create(_customerDto);
         var exeResult = result as ObjectResult;
-        var exeResultValue = exeResult?.Value as CustomerDto;
+        var exeResultValue = exeResult?.Value as CreateCustomerUseCase.Output;
 
         Assert.NotNull(exeResultValue);
 
-        var getResult = _controller.GetCustomer(exeResultValue.GetId());
+        var getResult = _controller.GetCustomer(exeResultValue.Id);
         var getExeResult = getResult as ObjectResult;
 
         // Assert 
         Assert.NotNull(getExeResult);
         Assert.Equal(getExeResult.StatusCode, StatusCodes.Status200OK);
-        Assert.Equal(exeResultValue.GetEmail(), _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.GetCpf(), _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.GetName(), _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.GetId(), _expectedCustomer.GetId());
+        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
+        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
+        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
+        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
     }
 
     private CustomerController ServiceMockSave(Customer expectedCustomer)

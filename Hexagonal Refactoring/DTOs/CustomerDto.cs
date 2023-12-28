@@ -9,8 +9,8 @@ public class CustomerDto()
     private string? _cpf;
     private string? _email;
     public long Id { get => GetId(); set => SetId(value); }
-    public string? Name { get => GetName(); set => SetName(value); }
-    public string? Cpf { get => GetCpf(); set => SetCpf(value); }
+    public string Name { get => GetName(); set => SetName(value); }
+    public string Cpf { get => GetCpf(); set => SetCpf(value); }
     public string? Email { get => GetEmail(); set => SetEmail(value); }
 
     public CustomerDto(Customer customer) : this()

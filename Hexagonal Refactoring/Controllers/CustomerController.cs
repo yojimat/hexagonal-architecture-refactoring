@@ -29,7 +29,8 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     [HttpGet("{id:long}")]
     public IActionResult GetCustomer(long id)
     {
-        var customer = customerService!.FindById(id);
-        return customer == null ? NotFound() : Ok(customer);
+        var getCustomerUseCase = new GetCustomerByIdUseCase(customerService);
+        var output = getCustomerUseCase.Execute(new GetCustomerByIdUseCase.Input(id));
+        return output == null ? NotFound() : Ok(output);
     }
 }

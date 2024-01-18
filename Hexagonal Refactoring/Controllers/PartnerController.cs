@@ -1,4 +1,6 @@
-﻿using Hexagonal_Refactoring.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+using Hexagonal_Refactoring.Application.UseCases;
+using Hexagonal_Refactoring.DTOs;
 using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,36 +14,27 @@ public class PartnerController(IPartnerService partnerService) : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] PartnerDto dto)
     {
-        if (partnerService.FindByCnpj(dto.GetCnpj()!) is not null)
+        try
         {
-            return UnprocessableEntity("Partner already exists");
+            var partnerCreateUseCase = new CreatePartnerUseCase(partnerService);
+            var output = partnerCreateUseCase.Execute(new CreatePartnerUseCase.Input(dto.GetCnpj(), dto.GetEmail(), dto.GetName()));
+
+            return Created($"api/partners/{output.Id}",
+                new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
+        }
+        catch (ValidationException e)
+        {
+            return UnprocessableEntity(e.Message);
         }
 
-        if (partnerService.FindByEmail(dto.GetEmail()!) is not null)
-        {
-            return UnprocessableEntity("Partner already exists");
-        }
-
-        var partner = new Partner();
-        partner.SetName(dto.GetName()!);
-        partner.SetCnpj(dto.GetCnpj()!);
-        partner.SetEmail(dto.GetEmail()!);
-
-        partner = partnerService.Save(partner);
-
-        return Created($"api/partners/{partner!.GetId()}", new PartnerDto(partner));
     }
 
     [HttpGet("{id:long}")]
     public IActionResult GetPartner(long id)
     {
-        var partner = partnerService.FindById(id);
-        if (partner is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(new PartnerDto(partner));
+        var getPartnerByIdUseCase = new GetPartnerByIdUseCase(partnerService);
+        var output = getPartnerByIdUseCase.Execute(new GetPartnerByIdUseCase.Input(id));
+        return output == null ? NotFound() : Ok(new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
     }
 }
 

@@ -6,7 +6,6 @@ namespace Hexagonal_Refactoring.Services;
 public class EventService(IEventRepository eventRepository, ITicketRepository ticketRepository)
     : IEventService
 {
-    //@Transactional
     public Event Save(Event ev)
     {
         return eventRepository.Save(ev);

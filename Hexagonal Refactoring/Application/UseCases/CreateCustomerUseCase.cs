@@ -4,11 +4,9 @@ using Hexagonal_Refactoring.Services;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
-public class CreateCustomerUseCase(ICustomerService customerService) : UseCase<CreateCustomerUseCase.Input, CreateCustomerUseCase.Output>
+public class CreateCustomerUseCase(ICustomerService customerService)
+    : UseCase<CreateCustomerUseCase.Input, CreateCustomerUseCase.Output>
 {
-    public record Input(string Cpf, string Email, string Name);
-    public record Output(long Id, string Cpf, string Email, string Name);
-
     public override Output Execute(Input input)
     {
         if (customerService.FindByCpf(input.Cpf) != null)
@@ -27,4 +25,8 @@ public class CreateCustomerUseCase(ICustomerService customerService) : UseCase<C
         return new Output(customer.GetId(), customer.GetCpf() ?? string.Empty, customer.GetEmail() ?? string.Empty,
             customer.GetName() ?? string.Empty);
     }
+
+    public record Input(string Cpf, string Email, string Name);
+
+    public record Output(long Id, string Cpf, string Email, string Name);
 }

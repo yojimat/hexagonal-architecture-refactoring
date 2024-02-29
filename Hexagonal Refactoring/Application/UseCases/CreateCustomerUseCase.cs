@@ -24,6 +24,7 @@ public class CreateCustomerUseCase(ICustomerService customerService) : UseCase<C
 
         customer = customerService.Save(customer);
 
-        return new Output(customer.GetId(), customer.GetCpf(), customer.GetEmail(), customer.GetName());
+        return new Output(customer.GetId(), customer.GetCpf() ?? string.Empty, customer.GetEmail() ?? string.Empty,
+            customer.GetName() ?? string.Empty);
     }
 }

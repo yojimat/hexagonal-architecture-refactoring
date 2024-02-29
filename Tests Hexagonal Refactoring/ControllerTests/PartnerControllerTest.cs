@@ -57,10 +57,10 @@ public class PartnerControllerTest
         var exeResult = result as ObjectResult;
         Assert.NotNull(exeResult);
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status422UnprocessableEntity);
-        Assert.Equal(exeResult.Value, "Partner already exists");
+        Assert.Equal(exeResult.Value, "Partner already exists.");
     }
 
-    [Fact(DisplayName = "Should not register a partner with duplicated CNPJ")]
+    [Fact(DisplayName = "Should not register a partner with duplicated Email")]
     public void TestCreateWithDuplicatedEmailShouldFail()
     {
         // Arrange
@@ -74,7 +74,7 @@ public class PartnerControllerTest
         var exeResult = result as ObjectResult;
         Assert.NotNull(exeResult);
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status422UnprocessableEntity);
-        Assert.Equal(exeResult.Value, "Partner already exists");
+        Assert.Equal(exeResult.Value, "Partner already exists.");
     }
 
     [Fact(DisplayName = "Should find a partner by id")]

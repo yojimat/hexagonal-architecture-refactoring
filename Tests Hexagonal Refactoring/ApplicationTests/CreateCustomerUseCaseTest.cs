@@ -18,15 +18,17 @@ public class CreateCustomerUseCaseTest
 
         CreateCustomerUseCase.Input createInput = new(expectedCpf, expectedEmail, expectedName);
 
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
+        Mock<ICustomerRepository> customerRepository = new();
+        customerRepository.Setup(x =>
             x.Save(It.Is<Customer>(c => c.GetCpf() == expectedCpf &&
                                         c.GetEmail() == expectedEmail &&
                                         c.GetName() == expectedName)))
             .Returns(mockCustomer);
 
+        var service = new CustomerService(customerRepository.Object);
+
         // When
-        CreateCustomerUseCase useCase = new(customerServiceMock.Object);
+        CreateCustomerUseCase useCase = new(service);
         var output = useCase.Execute(createInput);
 
         // Then
@@ -50,13 +52,16 @@ public class CreateCustomerUseCaseTest
 
         CreateCustomerUseCase.Input createInput = new(expectedCpf, expectedEmail, expectedName);
 
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
+        Mock<ICustomerRepository> customerRepositoryMock = new();
+        customerRepositoryMock.Setup(x =>
             x.FindByCpf(It.Is<string>(cpf => cpf.Equals(expectedCpf))))
             .Returns(mockCustomer);
 
+
+        var service = new CustomerService(customerRepositoryMock.Object);
+
         // When
-        CreateCustomerUseCase useCase = new(customerServiceMock.Object);
+        CreateCustomerUseCase useCase = new(service);
 
         // Then
         var actualException = Assert.Throws<ValidationException>(() => useCase.Execute(createInput));
@@ -76,15 +81,17 @@ public class CreateCustomerUseCaseTest
 
         var mockCustomer = new Customer(1, expectedName, expectedCpf, expectedEmail);
 
-        CreateCustomerUseCase.Input createInput = new(expectedCpf, expectedEmail, expectedName);
-
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
+        Mock<ICustomerRepository> customerRepositoryMock = new();
+        customerRepositoryMock.Setup(x =>
             x.FindByEmail(It.Is<string>(email => email.Equals(expectedEmail))))
             .Returns(mockCustomer);
 
+        var service = new CustomerService(customerRepositoryMock.Object);
+
+        CreateCustomerUseCase.Input createInput = new(expectedCpf, expectedEmail, expectedName);
+
         // When
-        CreateCustomerUseCase useCase = new(customerServiceMock.Object);
+        CreateCustomerUseCase useCase = new(service);
 
         // Then
         var actualException = Assert.Throws<ValidationException>(() => useCase.Execute(createInput));

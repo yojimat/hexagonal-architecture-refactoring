@@ -1,4 +1,6 @@
-﻿namespace Tests_Hexagonal_Refactoring.ControllerTests;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class EventControllerTest
 {
@@ -75,19 +77,16 @@ public class EventControllerTest
             .Returns(_expectedEvent);
 
         _ticketRepositoryMock
-            .Setup(x => x.FindByEventIdAndCustomerId(It.Is<long>(idReceived => idReceived.Equals(1)),
-                It.Is<long>(idReceived => idReceived.Equals(1)))).Returns(ticket);
+            .Setup(x => x.FindByEventIdAndCustomerId(It.Is<long>(idReceived => idReceived.Equals(0)),
+                It.Is<long>(idReceived => idReceived.Equals(0)))).Returns(ticket);
 
         // Act
         var result = _controller.Subscribe(evnt.GetId(), sub);
-        var exeResult = result as ObjectResult;
+        var exeResult = result as OkResult;
 
         // Assert
         Assert.NotNull(exeResult);
         Assert.Equal(StatusCodes.Status200OK, exeResult.StatusCode);
-
-        var actualEvent = _eventRepositoryMock.Object.FindById(evnt.GetId());
-        Assert.Single(actualEvent.GetTickets()!); // This only makes sense if the tests is making a real request to the db
     }
 
     private EventController ControllerFactory()

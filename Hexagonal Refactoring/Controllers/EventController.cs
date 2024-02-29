@@ -1,4 +1,6 @@
-﻿using Hexagonal_Refactoring.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+using Hexagonal_Refactoring.Application.UseCases;
+using Hexagonal_Refactoring.DTOs;
 using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,55 +14,41 @@ public class EventController(IEventService eventService, IPartnerService partner
     [HttpPost]
     public IActionResult Create([FromBody] EventDto dto)
     {
-        var evnt = new Event();
-        evnt.SetDate(DateTime.Parse(dto.GetDate() ?? DateTime.Now.ToShortDateString()));
-        evnt.SetName(dto.GetName());
-        evnt.SetTotalSpots(dto.GetTotalSpots());
+        if (dto.Partner is null) return BadRequest("Partner is required");
 
-        var partner = partnerService.FindById(dto.GetPartner()!.GetId());
+        var useCase = new CreateEventUseCase(partnerService, eventService);
 
-        if (partner == null) { throw new Exception("Partner not found"); }
+        try
+        {
+            var output = useCase.Execute(new CreateEventUseCase.Input(dto.GetName() ?? string.Empty, dto.GetDate() ?? string.Empty, dto.GetTotalSpots(),
+                dto.Partner.GetId()));
 
-        evnt.SetPartner(partner);
-        return Created("", new EventDto(eventService.Save(evnt)));
+            return Created($"/events/{output.Id}",
+                new EventDto(new Event(output.Id, dto.GetName(), DateTime.Parse(dto.GetDate() ?? string.Empty),
+                    dto.GetTotalSpots(), new HashSet<Ticket>())));
+        }
+        catch (ValidationException ex)
+        {
+            Console.WriteLine(ex);
+            return UnprocessableEntity(ex.Message);
+        }
     }
 
     [HttpPost("{id:long}/subscribe")]
     public IActionResult Subscribe(long id, [FromBody] SubscribeDto dto)
     {
-        var maybeCustomer = customerService.FindById(dto.GetCustomerId());
-        if (maybeCustomer is null)
+        var useCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
+
+        try
         {
-            return UnprocessableEntity("Customer not found");
-        }
+            useCase.Execute(new SubscribeCustomerToEventUseCase.Input(id, dto.Id));
 
-        var maybeEvent = eventService.FindById(id);
-        if (maybeEvent is null)
+            return Ok();
+        }
+        catch (ValidationException ex)
         {
-            return NotFound();
+            Console.WriteLine(ex);
+            return UnprocessableEntity(ex.Message);
         }
-
-        var maybeTicket = eventService.FindTicketByEventIdAndCustomerId(id, dto.GetCustomerId());
-        if (maybeTicket is not null)
-        {
-            return UnprocessableEntity("Email already registered");
-        }
-
-        if (maybeEvent.GetTotalSpots() < maybeEvent.GetTickets()!.Count + 1)
-        {
-            throw new Exception("Event sold out");
-        }
-
-        var ticket = new Ticket();
-        ticket.SetEvent(maybeEvent);
-        ticket.SetCustomer(maybeCustomer);
-        ticket.SetReservedAt(DateTime.Now);
-        ticket.SetStatus(TicketStatus.Pending);
-
-        maybeEvent.GetTickets()!.Add(ticket);
-
-        eventService.Save(maybeEvent);
-
-        return Ok(new EventDto(maybeEvent));
     }
 }

@@ -1,4 +1,5 @@
-﻿using Hexagonal_Refactoring.Application.UseCases;
+﻿using System.ComponentModel.DataAnnotations;
+using Hexagonal_Refactoring.Application.UseCases;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
@@ -43,5 +44,35 @@ public class CreateEventUseCaseTest
         Assert.NotNull(output);
         Assert.Equal(mockEvent.GetId(), output.Id);
         Assert.Equal(mockEvent.GetPartner().GetId(), output.Id);
+    }
+
+    [Fact(DisplayName = "Should throw exception when partner not found")]
+    public void TestCreateEventPartnerNotFound()
+    {
+        // Given
+        const string expectedName = "Event Name";
+        const int expectedTotalSpots = 100;
+        const long partnerId = 1;
+        var expectedDate = DateTime.Now;
+
+        CreateEventUseCase.Input createInput = new(expectedName,
+                       expectedDate.ToShortDateString(),
+                                  expectedTotalSpots,
+                                  partnerId);
+
+        Mock<ITicketRepository> ticketRepository = new();
+        Mock<IEventRepository> eventRepository = new();
+        Mock<IPartnerRepository> partnerRepository = new();
+        partnerRepository.Setup(x => x.FindById(It.Is<long>(id => id == partnerId)))
+            .Returns((Partner?)null);
+
+        var partnerService = new PartnerService(partnerRepository.Object);
+        var eventService = new EventService(eventRepository.Object, ticketRepository.Object);
+
+        // When
+        CreateEventUseCase useCase = new(partnerService, eventService);
+
+        // Then
+        Assert.Throws<ValidationException>(() => useCase.Execute(createInput));
     }
 }

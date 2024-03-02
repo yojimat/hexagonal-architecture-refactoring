@@ -2,5 +2,7 @@
 
 public enum TicketStatus
 {
-    Pending, Processing, Paid
+    Pending,
+    Processing,
+    Paid
 }

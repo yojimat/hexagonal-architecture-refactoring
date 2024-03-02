@@ -2,10 +2,10 @@
 
 public class Customer()
 {
-    private long _id;
-    private string? _name;
     private string? _cpf;
     private string? _email;
+    private long _id;
+    private string? _name;
 
     public Customer(long id, string? name, string? cpf, string? email) : this()
     {

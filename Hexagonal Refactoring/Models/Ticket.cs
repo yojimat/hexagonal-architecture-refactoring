@@ -2,12 +2,12 @@
 
 public class Ticket()
 {
-    private long _id;
     private Customer? _customer;
     private Event? _ev;
-    private TicketStatus _status;
+    private long _id;
     private DateTime _paidAt;
     private DateTime _reservedAt;
+    private TicketStatus _status;
 
     public Ticket(long id, Customer customer, Event ev, TicketStatus status, DateTime paidAt,
         DateTime reservedAt) : this()

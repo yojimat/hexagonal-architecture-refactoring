@@ -4,14 +4,10 @@ namespace Hexagonal_Refactoring.DTOs;
 
 public class CustomerDto()
 {
-    private long _id;
-    private string? _name;
     private string? _cpf;
     private string? _email;
-    public long Id { get => GetId(); set => SetId(value); }
-    public string Name { get => GetName(); set => SetName(value); }
-    public string Cpf { get => GetCpf(); set => SetCpf(value); }
-    public string? Email { get => GetEmail(); set => SetEmail(value); }
+    private long _id;
+    private string? _name;
 
     public CustomerDto(Customer customer) : this()
     {
@@ -19,6 +15,30 @@ public class CustomerDto()
         _name = customer.GetName();
         _cpf = customer.GetCpf();
         _email = customer.GetEmail();
+    }
+
+    public long Id
+    {
+        get => GetId();
+        set => SetId(value);
+    }
+
+    public string Name
+    {
+        get => GetName();
+        set => SetName(value);
+    }
+
+    public string Cpf
+    {
+        get => GetCpf();
+        set => SetCpf(value);
+    }
+
+    public string? Email
+    {
+        get => GetEmail();
+        set => SetEmail(value);
     }
 
     public long GetId()

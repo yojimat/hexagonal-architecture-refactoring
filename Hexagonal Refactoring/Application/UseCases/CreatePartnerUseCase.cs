@@ -7,9 +7,6 @@ namespace Hexagonal_Refactoring.Application.UseCases;
 public class CreatePartnerUseCase(IPartnerService partnerService)
     : UseCase<CreatePartnerUseCase.Input, CreatePartnerUseCase.Output>
 {
-    public record Input(string Cnpj, string Email, string Name);
-    public record Output(long Id, string Cnpj, string Email, string Name);
-
     public override Output Execute(Input input)
     {
         if (partnerService.FindByCnpj(input.Cnpj) != null)
@@ -27,4 +24,8 @@ public class CreatePartnerUseCase(IPartnerService partnerService)
 
         return new Output(partner.GetId(), partner.GetCnpj(), partner.GetEmail(), partner.GetName());
     }
+
+    public record Input(string Cnpj, string Email, string Name);
+
+    public record Output(long Id, string Cnpj, string Email, string Name);
 }

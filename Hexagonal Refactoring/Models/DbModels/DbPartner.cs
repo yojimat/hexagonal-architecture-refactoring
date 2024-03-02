@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hexagonal_Refactoring.Models.DbModels;
 
-[Table("Partners"), PrimaryKey("Id")]
+[Table("Partners")]
+[PrimaryKey("Id")]
 public class DbPartner : Partner
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -31,4 +32,3 @@ public class DbPartner : Partner
         init => SetEmail(value);
     }
 }
-

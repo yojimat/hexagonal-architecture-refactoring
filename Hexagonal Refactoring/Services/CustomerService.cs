@@ -25,5 +25,4 @@ public class CustomerService(ICustomerRepository repository) : ICustomerService
     {
         return repository.FindByEmail(email);
     }
-
 }

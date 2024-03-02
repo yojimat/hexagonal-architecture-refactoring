@@ -36,7 +36,7 @@ public class GetPartnerByIdUseCaseTest
     }
 
     [Fact(DisplayName = "Should return null when partner not found")]
-    public void TestByIdWithInvalidId()
+    public void TestWithInvalidId()
     {
         // Arrange
         const long expectedId = 1;

@@ -17,7 +17,9 @@ public class PartnerController(IPartnerService partnerService) : ControllerBase
         try
         {
             var partnerCreateUseCase = new CreatePartnerUseCase(partnerService);
-            var output = partnerCreateUseCase.Execute(new CreatePartnerUseCase.Input(dto.GetCnpj(), dto.GetEmail(), dto.GetName()));
+            var output =
+                partnerCreateUseCase.Execute(new CreatePartnerUseCase.Input(dto.GetCnpj(), dto.GetEmail(),
+                    dto.GetName()));
 
             return Created($"api/partners/{output.Id}",
                 new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
@@ -26,7 +28,6 @@ public class PartnerController(IPartnerService partnerService) : ControllerBase
         {
             return UnprocessableEntity(e.Message);
         }
-
     }
 
     [HttpGet("{id:long}")]
@@ -34,7 +35,8 @@ public class PartnerController(IPartnerService partnerService) : ControllerBase
     {
         var getPartnerByIdUseCase = new GetPartnerByIdUseCase(partnerService);
         var output = getPartnerByIdUseCase.Execute(new GetPartnerByIdUseCase.Input(id));
-        return output == null ? NotFound() : Ok(new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
+        return output == null
+            ? NotFound()
+            : Ok(new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
     }
 }
-

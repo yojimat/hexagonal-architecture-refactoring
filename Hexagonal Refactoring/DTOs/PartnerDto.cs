@@ -4,14 +4,10 @@ namespace Hexagonal_Refactoring.DTOs;
 
 public class PartnerDto()
 {
-    private long _id;
-    private string? _name;
     private string? _cnpj;
     private string? _email;
-    public long Id { get => GetId(); set => SetId(value); }
-    public string? Name { get => GetName(); set => SetName(value); }
-    public string? Cnpj { get => GetCnpj(); set => SetCnpj(value); }
-    public string? Email { get => GetEmail(); set => SetEmail(value); }
+    private long _id;
+    private string? _name;
 
     public PartnerDto(long id) : this()
     {
@@ -24,6 +20,30 @@ public class PartnerDto()
         Name = partner.GetName();
         Cnpj = partner.GetCnpj();
         Email = partner.GetEmail();
+    }
+
+    public long Id
+    {
+        get => GetId();
+        set => SetId(value);
+    }
+
+    public string? Name
+    {
+        get => GetName();
+        set => SetName(value);
+    }
+
+    public string? Cnpj
+    {
+        get => GetCnpj();
+        set => SetCnpj(value);
+    }
+
+    public string? Email
+    {
+        get => GetEmail();
+        set => SetEmail(value);
     }
 
     public long GetId()
@@ -65,6 +85,4 @@ public class PartnerDto()
     {
         _email = email;
     }
-
 }
-

@@ -3,7 +3,12 @@
 public class SubscribeDto
 {
     private long _customerId;
-    public long Id { get => GetCustomerId(); set => SetCustomerId(value); }
+
+    public long Id
+    {
+        get => GetCustomerId();
+        set => SetCustomerId(value);
+    }
 
     public long GetCustomerId()
     {

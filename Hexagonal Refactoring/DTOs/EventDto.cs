@@ -4,24 +4,49 @@ namespace Hexagonal_Refactoring.DTOs;
 
 public class EventDto()
 {
+    private string? _date;
     private long _id;
     private string? _name;
-    private string? _date;
-    private int _totalSpots;
     private PartnerDto? _partner;
-    public long Id { get => GetId(); set => SetId(value); }
-    public string? Name { get => GetName(); set => SetName(value); }
-    public string? Date { get => GetDate(); set => SetDate(value); }
-    public int TotalSpots { get => GetTotalSpots(); set => SetTotalSpots(value); }
-    public PartnerDto? Partner { get => GetPartner(); set => SetPartner(value); }
+    private int _totalSpots;
 
-    public EventDto(Event evnt): this()
+    public EventDto(Event evnt) : this()
     {
         _id = evnt.GetId();
         _name = evnt.GetName();
         _date = evnt.GetDate().ToShortDateString();
         _totalSpots = evnt.GetTotalSpots();
         _partner = new PartnerDto(evnt.GetPartner());
+    }
+
+    public long Id
+    {
+        get => GetId();
+        set => SetId(value);
+    }
+
+    public string? Name
+    {
+        get => GetName();
+        set => SetName(value);
+    }
+
+    public string? Date
+    {
+        get => GetDate();
+        set => SetDate(value);
+    }
+
+    public int TotalSpots
+    {
+        get => GetTotalSpots();
+        set => SetTotalSpots(value);
+    }
+
+    public PartnerDto? Partner
+    {
+        get => GetPartner();
+        set => SetPartner(value);
     }
 
     public long GetId()

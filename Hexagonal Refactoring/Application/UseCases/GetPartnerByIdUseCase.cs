@@ -5,9 +5,6 @@ namespace Hexagonal_Refactoring.Application.UseCases;
 public class GetPartnerByIdUseCase(IPartnerService partnerService)
     : UseCase<GetPartnerByIdUseCase.Input, GetPartnerByIdUseCase.Output>
 {
-    public record Input(long Id);
-    public record Output(long Id, string Cnpj, string Email, string? Name);
-
     public override Output? Execute(Input getInput)
     {
         var partner = partnerService.FindById(getInput.Id);
@@ -17,4 +14,8 @@ public class GetPartnerByIdUseCase(IPartnerService partnerService)
                 partner.GetName());
         return output;
     }
+
+    public record Input(long Id);
+
+    public record Output(long Id, string Cnpj, string Email, string? Name);
 }

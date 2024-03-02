@@ -7,17 +7,15 @@ namespace Hexagonal_Refactoring.Application.UseCases;
 public class SubscribeCustomerToEventUseCase(ICustomerService customerService, IEventService eventService) :
     UnitUseCase<SubscribeCustomerToEventUseCase.Input>
 {
-    public record Input(long CustomerId, long EventId);
-
     public override void Execute(Input input)
     {
         var maybeEvent = eventService.FindById(input.EventId) ??
-                            throw new ValidationException("Event not found");
+                         throw new ValidationException("Event not found");
 
         var maybeCustomer = customerService.FindById(input.CustomerId) ??
                             throw new ValidationException("Customer not found");
 
-        _ = eventService.FindTicketByEventIdAndCustomerId(input.EventId, input.CustomerId) ??
+        if (eventService.FindTicketByEventIdAndCustomerId(input.EventId, input.CustomerId) != null)
             throw new ValidationException("Email already registered");
 
         if (maybeEvent.GetTotalSpots() < maybeEvent.GetTickets()!.Count + 1)
@@ -33,4 +31,6 @@ public class SubscribeCustomerToEventUseCase(ICustomerService customerService, I
 
         eventService.Save(maybeEvent);
     }
+
+    public record Input(long CustomerId, long EventId);
 }

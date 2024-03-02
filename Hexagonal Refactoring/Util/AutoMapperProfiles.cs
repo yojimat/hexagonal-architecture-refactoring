@@ -14,4 +14,3 @@ public class AutoMapperProfiles : Profile
         CreateMap<Ticket, DbTicket>();
     }
 }
-

@@ -78,7 +78,7 @@ public class EventControllerTest
 
         _ticketRepositoryMock
             .Setup(x => x.FindByEventIdAndCustomerId(It.Is<long>(idReceived => idReceived.Equals(0)),
-                It.Is<long>(idReceived => idReceived.Equals(0)))).Returns(ticket);
+                It.Is<long>(idReceived => idReceived.Equals(0)))).Returns((Ticket?)null);
 
         // Act
         var result = _controller.Subscribe(evnt.GetId(), sub);

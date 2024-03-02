@@ -18,7 +18,8 @@ public class TicketRepository(EventContext eventContext) : ITicketRepository
 
     public Ticket Save(Ticket entity)
     {
-        var ticketEntityEntry = eventContext.Tickets.Add(entity as DbTicket ?? throw new ArgumentNullException(nameof(entity)));
+        var ticketEntityEntry =
+            eventContext.Tickets.Add(entity as DbTicket ?? throw new ArgumentNullException(nameof(entity)));
         eventContext.SaveChanges();
         return ticketEntityEntry.Entity;
     }
@@ -34,4 +35,3 @@ public class TicketRepository(EventContext eventContext) : ITicketRepository
             p.EventId == eventId && p.CustomerId == customerId);
     }
 }
-

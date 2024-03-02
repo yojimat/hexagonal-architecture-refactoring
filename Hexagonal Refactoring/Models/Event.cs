@@ -2,11 +2,11 @@
 
 public class Event()
 {
+    private DateTime _date;
     private long _id;
+    private string? _name;
     private Partner _partner = new();
     private ISet<Ticket>? _tickets = new HashSet<Ticket>();
-    private string? _name;
-    private DateTime _date;
     private int _totalSpots;
 
     public Event(long id, string? name, DateTime date, int totalSpots, ISet<Ticket>? tickets) : this()

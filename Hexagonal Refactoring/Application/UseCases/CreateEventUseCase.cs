@@ -4,11 +4,9 @@ using Hexagonal_Refactoring.Services;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
-public class CreateEventUseCase(IPartnerService partnerService, IEventService eventService) : UseCase<CreateEventUseCase.Input, CreateEventUseCase.Output>
+public class CreateEventUseCase(IPartnerService partnerService, IEventService eventService)
+    : UseCase<CreateEventUseCase.Input, CreateEventUseCase.Output>
 {
-    public record Input(string Name, string Date, long TotalSpots, long PartnerId);
-    public record Output(long Id, long PartnerId);
-
     public override Output Execute(Input input)
     {
         var partner = partnerService.FindById(input.PartnerId);
@@ -25,4 +23,8 @@ public class CreateEventUseCase(IPartnerService partnerService, IEventService ev
 
         return new Output(newEvent.GetId(), newEvent.GetPartner().GetId());
     }
+
+    public record Input(string Name, string Date, long TotalSpots, long PartnerId);
+
+    public record Output(long Id, long PartnerId);
 }

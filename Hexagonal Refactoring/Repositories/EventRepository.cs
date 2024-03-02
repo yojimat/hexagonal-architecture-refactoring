@@ -47,4 +47,3 @@ public class EventRepository(EventContext eventContext, IMapper mapper) : IEvent
         throw new NotImplementedException();
     }
 }
-

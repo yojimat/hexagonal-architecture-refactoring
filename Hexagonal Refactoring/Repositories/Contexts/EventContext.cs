@@ -10,4 +10,3 @@ public class EventContext(DbContextOptions options) : DbContext(options)
     public DbSet<DbPartner> Partners { get; init; } = null!;
     public DbSet<DbCustomer> Customers { get; init; } = null!;
 }
-

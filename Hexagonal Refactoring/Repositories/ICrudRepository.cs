@@ -1,6 +1,4 @@
-﻿using Hexagonal_Refactoring.Models;
-
-namespace Hexagonal_Refactoring.Repositories;
+﻿namespace Hexagonal_Refactoring.Repositories;
 
 public interface ICrudRepository<T, TK>
 {

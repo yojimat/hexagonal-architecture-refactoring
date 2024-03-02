@@ -9,7 +9,10 @@ namespace Hexagonal_Refactoring.Controllers;
 
 [ApiController]
 [Route("api/events")]
-public class EventController(IEventService eventService, IPartnerService partnerService, ICustomerService customerService) : ControllerBase
+public class EventController(
+    IEventService eventService,
+    IPartnerService partnerService,
+    ICustomerService customerService) : ControllerBase
 {
     [HttpPost]
     public IActionResult Create([FromBody] EventDto dto)
@@ -20,7 +23,8 @@ public class EventController(IEventService eventService, IPartnerService partner
 
         try
         {
-            var output = useCase.Execute(new CreateEventUseCase.Input(dto.GetName() ?? string.Empty, dto.GetDate() ?? string.Empty, dto.GetTotalSpots(),
+            var output = useCase.Execute(new CreateEventUseCase.Input(dto.GetName() ?? string.Empty,
+                dto.GetDate() ?? string.Empty, dto.GetTotalSpots(),
                 dto.Partner.GetId()));
 
             return Created($"/events/{output.Id}",

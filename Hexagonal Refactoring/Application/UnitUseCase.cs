@@ -2,6 +2,5 @@
 
 public abstract class UnitUseCase<TInput>
 {
-   public abstract void Execute(TInput input);
+    public abstract void Execute(TInput input);
 }
-

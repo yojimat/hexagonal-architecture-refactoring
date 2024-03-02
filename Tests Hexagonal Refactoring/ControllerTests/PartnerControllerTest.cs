@@ -1,4 +1,6 @@
-﻿namespace Tests_Hexagonal_Refactoring.ControllerTests;
+﻿using Hexagonal_Refactoring.Application.UseCases;
+
+namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class PartnerControllerTest
 {
@@ -109,7 +111,9 @@ public class PartnerControllerTest
     private PartnerController ControllerFactory()
     {
         var partnerService = new PartnerService(_partnerRepositoryMock.Object);
-        var controller = new PartnerController(partnerService);
+        CreatePartnerUseCase createPartnerUseCase = new(partnerService);
+        GetPartnerByIdUseCase getPartnerByIdUseCase = new(partnerService);
+        var controller = new PartnerController(createPartnerUseCase, getPartnerByIdUseCase);
         return controller;
     }
 }

@@ -148,11 +148,14 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         };
 
         var service = new CustomerService(_customerRepositoryMock.Object);
+        var createCustomerUseCase = new CreateCustomerUseCase(service);
+        var getCustomerByIdUseCase = new GetCustomerByIdUseCase(service);
 
-        var controller = new CustomerController(service)
+        var controller = new CustomerController(createCustomerUseCase, getCustomerByIdUseCase)
         {
-            ControllerContext = controllerContext,
+            ControllerContext = controllerContext
         };
+
         return controller;
     }
 

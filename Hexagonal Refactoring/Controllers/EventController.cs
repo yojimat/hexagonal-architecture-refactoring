@@ -2,7 +2,6 @@
 using Hexagonal_Refactoring.Application.UseCases;
 using Hexagonal_Refactoring.DTOs;
 using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hexagonal_Refactoring.Controllers;
@@ -10,20 +9,17 @@ namespace Hexagonal_Refactoring.Controllers;
 [ApiController]
 [Route("api/events")]
 public class EventController(
-    IEventService eventService,
-    IPartnerService partnerService,
-    ICustomerService customerService) : ControllerBase
+    CreateEventUseCase createEventUseCase,
+    SubscribeCustomerToEventUseCase subscribeCustomerToEventUseCase) : ControllerBase
 {
     [HttpPost]
     public IActionResult Create([FromBody] EventDto dto)
     {
         if (dto.Partner is null) return BadRequest("Partner is required");
 
-        var useCase = new CreateEventUseCase(partnerService, eventService);
-
         try
         {
-            var output = useCase.Execute(new CreateEventUseCase.Input(dto.GetName() ?? string.Empty,
+            var output = createEventUseCase.Execute(new CreateEventUseCase.Input(dto.GetName() ?? string.Empty,
                 dto.GetDate() ?? string.Empty, dto.GetTotalSpots(),
                 dto.Partner.GetId()));
 
@@ -41,11 +37,9 @@ public class EventController(
     [HttpPost("{id:long}/subscribe")]
     public IActionResult Subscribe(long id, [FromBody] SubscribeDto dto)
     {
-        var useCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
-
         try
         {
-            useCase.Execute(new SubscribeCustomerToEventUseCase.Input(id, dto.Id));
+            subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(id, dto.Id));
 
             return Ok();
         }

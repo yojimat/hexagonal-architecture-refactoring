@@ -1,6 +1,4 @@
-using Hexagonal_Refactoring.Repositories;
 using Hexagonal_Refactoring.Repositories.Contexts;
-using Hexagonal_Refactoring.Services;
 using Hexagonal_Refactoring.Util;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,14 +15,9 @@ builder.Services.AddDbContext<EventContext>(opt =>
     opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
-builder.Services.AddScoped<IEventRepository, EventRepository>();
-builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<ITicketRepository, TicketRepository>();
-
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IPartnerService, PartnerService>();
-builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddRepositories();
+builder.Services.AddServices();
+builder.Services.AddUseCases();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

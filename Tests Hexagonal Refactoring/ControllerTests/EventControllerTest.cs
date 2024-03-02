@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Hexagonal_Refactoring.Application.UseCases;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
@@ -94,7 +95,10 @@ public class EventControllerTest
         var eventService = new EventService(_eventRepositoryMock.Object, _ticketRepositoryMock.Object);
         var partnerService = new PartnerService(_partnerRepositoryMock.Object);
         var customerService = new CustomerService(_customerRepositoryMock.Object);
-        var controller = new EventController(eventService, partnerService, customerService);
+        var createEventUseCase = new CreateEventUseCase(partnerService, eventService);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
+
+        var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
         return controller;
     }
 

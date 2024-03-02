@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Hexagonal_Refactoring.Application.UseCases;
 using Hexagonal_Refactoring.DTOs;
-using Hexagonal_Refactoring.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hexagonal_Refactoring.Controllers;
@@ -13,19 +12,17 @@ public class EventController(
     SubscribeCustomerToEventUseCase subscribeCustomerToEventUseCase) : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create([FromBody] EventDto dto)
+    public IActionResult Create([FromBody] NewEventDto dto)
     {
         if (dto.Partner is null) return BadRequest("Partner is required");
 
         try
         {
-            var output = createEventUseCase.Execute(new CreateEventUseCase.Input(dto.GetName() ?? string.Empty,
-                dto.GetDate() ?? string.Empty, dto.GetTotalSpots(),
+            var output = createEventUseCase.Execute(new CreateEventUseCase.Input(dto.Name ?? string.Empty,
+                dto.Date ?? string.Empty, dto.TotalSpots,
                 dto.Partner.GetId()));
 
-            return Created($"/events/{output.Id}",
-                new EventDto(new Event(output.Id, dto.GetName(), DateTime.Parse(dto.GetDate() ?? string.Empty),
-                    dto.GetTotalSpots(), new HashSet<Ticket>())));
+            return Created($"/events/{output.Id}", dto);
         }
         catch (ValidationException ex)
         {
@@ -39,7 +36,7 @@ public class EventController(
     {
         try
         {
-            subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(id, dto.Id));
+            subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(id, dto.CustomerId));
 
             return Ok();
         }

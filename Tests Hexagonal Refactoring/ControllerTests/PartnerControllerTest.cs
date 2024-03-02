@@ -4,17 +4,14 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class PartnerControllerTest
 {
-    private readonly Mock<IPartnerRepository> _partnerRepositoryMock = new();
     private readonly PartnerController _controller;
     private readonly Partner _expectedPartner;
-    private readonly PartnerDto _partnerDto;
+    private readonly NewPartnerDto _partnerDto;
+    private readonly Mock<IPartnerRepository> _partnerRepositoryMock = new();
 
     public PartnerControllerTest()
     {
-        _partnerDto = new PartnerDto();
-        _partnerDto.SetCnpj("41536538000100");
-        _partnerDto.SetEmail("john.doe@gmail.com");
-        _partnerDto.SetName("John Doe");
+        _partnerDto = new NewPartnerDto("John Doe", "41536538000100", "john.doe@gmail.com");
 
         _controller = ControllerFactory();
         _expectedPartner = TestPartnerFactory(_partnerDto);
@@ -34,15 +31,15 @@ public class PartnerControllerTest
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as PartnerDto;
+        var exeResultValue = exeResult.Value as NewPartnerDto;
 
         // Assert
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
 
         Assert.NotNull(exeResultValue);
-        Assert.Equal(exeResultValue.GetEmail(), _partnerDto.GetEmail());
-        Assert.Equal(exeResultValue.GetCnpj(), _partnerDto.GetCnpj());
-        Assert.Equal(exeResultValue.GetName(), _partnerDto.GetName());
+        Assert.Equal(exeResultValue.Email, _partnerDto.Email);
+        Assert.Equal(exeResultValue.Cnpj, _partnerDto.Cnpj);
+        Assert.Equal(exeResultValue.Name, _partnerDto.Name);
     }
 
     [Fact(DisplayName = "Should not register a partner with duplicated CNPJ")]
@@ -93,20 +90,23 @@ public class PartnerControllerTest
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as PartnerDto;
+        var exeResultValue = exeResult.Value as Partner;
 
         // Assert
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status200OK);
 
         Assert.NotNull(exeResultValue);
-        Assert.Equal(exeResultValue.GetId(), _partnerDto.GetId());
-        Assert.Equal(exeResultValue.GetEmail(), _partnerDto.GetEmail());
-        Assert.Equal(exeResultValue.GetCnpj(), _partnerDto.GetCnpj());
-        Assert.Equal(exeResultValue.GetName(), _partnerDto.GetName());
+        Assert.Equal(exeResultValue.GetId(), _expectedPartner.GetId());
+        Assert.Equal(exeResultValue.GetEmail(), _expectedPartner.GetEmail());
+        Assert.Equal(exeResultValue.GetCnpj(), _expectedPartner.GetCnpj());
+        Assert.Equal(exeResultValue.GetName(), _expectedPartner.GetName());
     }
 
-    private static Partner TestPartnerFactory(PartnerDto partnerDto) => new(partnerDto.GetId(), partnerDto.GetName(),
-        partnerDto.GetCnpj(), partnerDto.GetEmail());
+    private static Partner TestPartnerFactory(NewPartnerDto partnerDto)
+    {
+        return new Partner(0, partnerDto.Name,
+            partnerDto.Cnpj, partnerDto.Email);
+    }
 
     private PartnerController ControllerFactory()
     {
@@ -117,4 +117,3 @@ public class PartnerControllerTest
         return controller;
     }
 }
-

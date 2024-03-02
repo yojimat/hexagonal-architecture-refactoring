@@ -26,8 +26,8 @@ public class CreateEventUseCaseTest
         Mock<ITicketRepository> ticketRepository = new();
         Mock<IEventRepository> eventRepository = new();
         eventRepository.Setup(x => x.Save(It.Is<Event>(e => e.GetName() == expectedName &&
-                                e.GetTotalSpots() == expectedTotalSpots)))
-                        .Returns(mockEvent);
+                                                            e.GetTotalSpots() == expectedTotalSpots)))
+            .Returns(mockEvent);
 
         Mock<IPartnerRepository> partnerRepository = new();
         partnerRepository.Setup(x => x.FindById(It.Is<long>(id => id == partnerId)))
@@ -56,9 +56,9 @@ public class CreateEventUseCaseTest
         var expectedDate = DateTime.Now;
 
         CreateEventUseCase.Input createInput = new(expectedName,
-                       expectedDate.ToShortDateString(),
-                                  expectedTotalSpots,
-                                  partnerId);
+            expectedDate.ToShortDateString(),
+            expectedTotalSpots,
+            partnerId);
 
         Mock<ITicketRepository> ticketRepository = new();
         Mock<IEventRepository> eventRepository = new();

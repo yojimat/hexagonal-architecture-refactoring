@@ -12,16 +12,15 @@ public class PartnerController(CreatePartnerUseCase createPartnerUseCase, GetPar
     : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create([FromBody] PartnerDto dto)
+    public IActionResult Create([FromBody] NewPartnerDto dto)
     {
         try
         {
             var output =
-                createPartnerUseCase.Execute(new CreatePartnerUseCase.Input(dto.GetCnpj(), dto.GetEmail(),
-                    dto.GetName()));
+                createPartnerUseCase.Execute(new CreatePartnerUseCase.Input(dto.Cnpj, dto.Email,
+                    dto.Name));
 
-            return Created($"api/partners/{output.Id}",
-                new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
+            return Created($"api/partners/{output.Id}", dto);
         }
         catch (ValidationException e)
         {
@@ -35,6 +34,7 @@ public class PartnerController(CreatePartnerUseCase createPartnerUseCase, GetPar
         var output = getPartnerByIdUseCase.Execute(new GetPartnerByIdUseCase.Input(id));
         return output == null
             ? NotFound()
-            : Ok(new PartnerDto(new Partner(output.Id, output.Name, output.Cnpj, output.Email)));
+            : Ok(new Partner
+                (output.Id, output.Name, output.Cnpj, output.Email));
     }
 }

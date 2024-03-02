@@ -5,7 +5,6 @@ namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
 public class CreatePartnerUseCaseTest
 {
-
     [Fact(DisplayName = "Should create a partner")]
     public void TestCreatePartner()
     {
@@ -20,9 +19,9 @@ public class CreatePartnerUseCaseTest
 
         Mock<IPartnerRepository> partnerRepository = new();
         partnerRepository.Setup(x =>
-            x.Save(It.Is<Partner>(c => c.GetCnpj() == expectedCpnj &&
-                                        c.GetEmail() == expectedEmail &&
-                                        c.GetName() == expectedName)))
+                x.Save(It.Is<Partner>(c => c.GetCnpj() == expectedCpnj &&
+                                           c.GetEmail() == expectedEmail &&
+                                           c.GetName() == expectedName)))
             .Returns(mockPartner);
 
         var service = new PartnerService(partnerRepository.Object);
@@ -54,7 +53,7 @@ public class CreatePartnerUseCaseTest
 
         Mock<IPartnerRepository> partnerRepositoryMock = new();
         partnerRepositoryMock.Setup(x =>
-            x.FindByCnpj(It.Is<string>(cpf => cpf.Equals(expectedCnpj))))
+                x.FindByCnpj(It.Is<string>(cpf => cpf.Equals(expectedCnpj))))
             .Returns(mockPartner);
 
         var service = new PartnerService(partnerRepositoryMock.Object);
@@ -81,7 +80,7 @@ public class CreatePartnerUseCaseTest
 
         Mock<IPartnerRepository> partnerRepositoryMock = new();
         partnerRepositoryMock.Setup(x =>
-            x.FindByEmail(It.Is<string>(email => email.Equals(expectedEmail))))
+                x.FindByEmail(It.Is<string>(email => email.Equals(expectedEmail))))
             .Returns(mockPartner);
 
         var service = new PartnerService(partnerRepositoryMock.Object);
@@ -98,4 +97,3 @@ public class CreatePartnerUseCaseTest
         Assert.Equal(expectedExceptionMessage, actualException.Message);
     }
 }
-

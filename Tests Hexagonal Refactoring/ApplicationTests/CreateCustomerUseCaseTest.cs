@@ -5,7 +5,6 @@ namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
 public class CreateCustomerUseCaseTest
 {
-
     [Fact(DisplayName = "Should create a customer")]
     public void TestCreateCustomer()
     {
@@ -20,9 +19,9 @@ public class CreateCustomerUseCaseTest
 
         Mock<ICustomerRepository> customerRepository = new();
         customerRepository.Setup(x =>
-            x.Save(It.Is<Customer>(c => c.GetCpf() == expectedCpf &&
-                                        c.GetEmail() == expectedEmail &&
-                                        c.GetName() == expectedName)))
+                x.Save(It.Is<Customer>(c => c.GetCpf() == expectedCpf &&
+                                            c.GetEmail() == expectedEmail &&
+                                            c.GetName() == expectedName)))
             .Returns(mockCustomer);
 
         var service = new CustomerService(customerRepository.Object);
@@ -54,7 +53,7 @@ public class CreateCustomerUseCaseTest
 
         Mock<ICustomerRepository> customerRepositoryMock = new();
         customerRepositoryMock.Setup(x =>
-            x.FindByCpf(It.Is<string>(cpf => cpf.Equals(expectedCpf))))
+                x.FindByCpf(It.Is<string>(cpf => cpf.Equals(expectedCpf))))
             .Returns(mockCustomer);
 
 
@@ -83,7 +82,7 @@ public class CreateCustomerUseCaseTest
 
         Mock<ICustomerRepository> customerRepositoryMock = new();
         customerRepositoryMock.Setup(x =>
-            x.FindByEmail(It.Is<string>(email => email.Equals(expectedEmail))))
+                x.FindByEmail(It.Is<string>(email => email.Equals(expectedEmail))))
             .Returns(mockCustomer);
 
         var service = new CustomerService(customerRepositoryMock.Object);
@@ -100,4 +99,3 @@ public class CreateCustomerUseCaseTest
         Assert.Equal(expectedExceptionMessage, actualException.Message);
     }
 }
-

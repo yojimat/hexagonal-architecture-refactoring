@@ -19,21 +19,21 @@ public class SubscribeCustomerToEventUseCaseTest
 
         Mock<ICustomerService> customerServiceMock = new();
         customerServiceMock.Setup(x =>
-                       x.FindById(It.Is<long>(idReceived =>
-                                          idReceived.Equals(expectedCustomerId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedCustomerId))))
             .Returns(mockCustomer);
 
         Mock<IEventService> eventServiceMock = new();
         eventServiceMock.Setup(x =>
-                       x.FindById(It.Is<long>(idReceived =>
-                                          idReceived.Equals(expectedEventId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedEventId))))
             .Returns(mockEvent);
 
         eventServiceMock.Setup(x =>
-                       x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
-                                          eventId.Equals(expectedEventId)),
-                                          It.Is<long>(customerId =>
-                                                                 customerId.Equals(expectedCustomerId))))
+                x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
+                        eventId.Equals(expectedEventId)),
+                    It.Is<long>(customerId =>
+                        customerId.Equals(expectedCustomerId))))
             .Returns((Ticket?)null);
 
         //when
@@ -42,7 +42,7 @@ public class SubscribeCustomerToEventUseCaseTest
 
         //then
         eventServiceMock.Verify(x => x.Save(It.Is<Event>(e =>
-                                                     e.GetTickets()!.Count == 1)), Times.Once);
+            e.GetTickets()!.Count == 1)), Times.Once);
     }
 
     [Fact(DisplayName = "Shouldn't subscribe a customer to an event if the event is sold out")]
@@ -59,21 +59,21 @@ public class SubscribeCustomerToEventUseCaseTest
 
         Mock<ICustomerService> customerServiceMock = new();
         customerServiceMock.Setup(x =>
-                       x.FindById(It.Is<long>(idReceived =>
-                                          idReceived.Equals(expectedCustomerId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedCustomerId))))
             .Returns(mockCustomer);
 
         Mock<IEventService> eventServiceMock = new();
         eventServiceMock.Setup(x =>
-                       x.FindById(It.Is<long>(idReceived =>
-                                          idReceived.Equals(expectedEventId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedEventId))))
             .Returns(mockEvent);
 
         eventServiceMock.Setup(x =>
-                       x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
-                                          eventId.Equals(expectedEventId)),
-                                          It.Is<long>(customerId =>
-                                                                 customerId.Equals(expectedCustomerId))))
+                x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
+                        eventId.Equals(expectedEventId)),
+                    It.Is<long>(customerId =>
+                        customerId.Equals(expectedCustomerId))))
             .Returns((Ticket?)null);
 
         //when
@@ -98,21 +98,21 @@ public class SubscribeCustomerToEventUseCaseTest
 
         Mock<ICustomerService> customerServiceMock = new();
         customerServiceMock.Setup(x =>
-                              x.FindById(It.Is<long>(idReceived =>
-                                                                       idReceived.Equals(expectedCustomerId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedCustomerId))))
             .Returns(mockCustomer);
 
         Mock<IEventService> eventServiceMock = new();
         eventServiceMock.Setup(x =>
-                              x.FindById(It.Is<long>(idReceived =>
-                                                                       idReceived.Equals(expectedEventId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedEventId))))
             .Returns(mockEvent);
 
         eventServiceMock.Setup(x =>
-                              x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
-                                                                       eventId.Equals(expectedEventId)),
-                                                                       It.Is<long>(customerId =>
-                                                                       customerId.Equals(expectedCustomerId))))
+                x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
+                        eventId.Equals(expectedEventId)),
+                    It.Is<long>(customerId =>
+                        customerId.Equals(expectedCustomerId))))
             .Returns(new Ticket());
 
         //when
@@ -136,14 +136,14 @@ public class SubscribeCustomerToEventUseCaseTest
 
         Mock<ICustomerService> customerServiceMock = new();
         customerServiceMock.Setup(x =>
-                                         x.FindById(It.Is<long>(idReceived =>
-                                           idReceived.Equals(expectedCustomerId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedCustomerId))))
             .Returns((Customer?)null);
 
         Mock<IEventService> eventServiceMock = new();
         eventServiceMock.Setup(x =>
-                                         x.FindById(It.Is<long>(idReceived =>
-                                           idReceived.Equals(expectedEventId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedEventId))))
             .Returns(mockEvent);
 
         //when
@@ -167,8 +167,8 @@ public class SubscribeCustomerToEventUseCaseTest
 
         Mock<IEventService> eventServiceMock = new();
         eventServiceMock.Setup(x =>
-                                              x.FindById(It.Is<long>(idReceived =>
-                                                  idReceived.Equals(expectedEventId))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(expectedEventId))))
             .Returns((Event?)null);
 
         //when

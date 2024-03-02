@@ -1,19 +1,18 @@
 ﻿using System.Net.Mime;
 using Hexagonal_Refactoring.Application.UseCases;
 
-namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerControllerTest
+namespace Tests_Hexagonal_Refactoring.ControllerTests;
+
+public class CustomerControllerTest
 {
-    private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
     private readonly CustomerController _controller;
-    private readonly CustomerDto _customerDto;
+    private readonly NewCustomerDto _customerDto;
+    private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
     private readonly Customer _expectedCustomer;
 
     public CustomerControllerTest()
     {
-        _customerDto = new CustomerDto();
-        _customerDto.SetCpf("12345678901");
-        _customerDto.SetEmail("john.doe@gmail.com");
-        _customerDto.SetName("John Doe");
+        _customerDto = new NewCustomerDto("12345678901", "john.doe@gmail.com", "John Doe");
 
         _expectedCustomer = TestCustomerFactory(_customerDto);
         _controller = ServiceMockSave(_expectedCustomer);
@@ -30,7 +29,8 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
         // Assert
-        Assert.NotNull(exeResult); Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
+        Assert.NotNull(exeResult);
+        Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
 
         Assert.NotNull(exeResultValue);
         Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
@@ -50,9 +50,8 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         Assert.NotNull(exeResult);
         var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
-        _customerDto.SetEmail("john2@gmail.com");
         _customerRepositoryMock.Setup(x =>
-                           x.FindByCpf(It.Is<string>(cpfReceived => cpfReceived.Equals(_customerDto.GetCpf()))))
+                x.FindByCpf(It.Is<string>(cpfReceived => cpfReceived.Equals(_customerDto.Cpf))))
             .Returns(_expectedCustomer);
 
         // Create the second client with the same CPF
@@ -83,9 +82,8 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         Assert.NotNull(exeResult);
         var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
-        _customerDto.SetCpf("22345678901");
         _customerRepositoryMock.Setup(x =>
-                           x.FindByEmail(It.Is<string>(emailReceived => emailReceived.Equals(_customerDto.GetEmail()))))
+                x.FindByEmail(It.Is<string>(emailReceived => emailReceived.Equals(_customerDto.Email))))
             .Returns(_expectedCustomer);
 
         // Create the second client with the same CPF
@@ -110,8 +108,8 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
     {
         // Arrange
         _customerRepositoryMock.Setup(x =>
-                                      x.FindById(It.Is<long>(idReceived =>
-                                          idReceived.Equals(_expectedCustomer.GetId()))))
+                x.FindById(It.Is<long>(idReceived =>
+                    idReceived.Equals(_expectedCustomer.GetId()))))
             .Returns(_expectedCustomer);
 
         // Act
@@ -142,9 +140,9 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.ContentType = MediaTypeNames.Application.Json;
 
-        var controllerContext = new ControllerContext()
+        var controllerContext = new ControllerContext
         {
-            HttpContext = httpContext,
+            HttpContext = httpContext
         };
 
         var service = new CustomerService(_customerRepositoryMock.Object);
@@ -159,9 +157,9 @@ namespace Tests_Hexagonal_Refactoring.ControllerTests; public class CustomerCont
         return controller;
     }
 
-    private static Customer TestCustomerFactory(CustomerDto customer)
+    private static Customer TestCustomerFactory(NewCustomerDto customer)
     {
-        return new Customer(customer.GetId(), customer.GetCpf(), customer.GetName(),
-            customer.GetEmail());
+        return new Customer(0, customer.Cpf, customer.Name,
+            customer.Email);
     }
 }

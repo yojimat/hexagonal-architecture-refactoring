@@ -10,7 +10,7 @@ public class EventControllerTest
     private readonly Mock<IPartnerRepository> _partnerRepositoryMock = new();
     private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
     private readonly EventController _controller;
-    private readonly EventDto _eventDto;
+    private readonly NewEventDto _eventDto;
     private readonly Event _expectedEvent;
     private readonly Partner _disney;
 
@@ -18,11 +18,7 @@ public class EventControllerTest
     {
 
         _disney = new Partner(1, "Disney", "456", "disney@gmail.com");
-        _eventDto = new EventDto();
-        _eventDto.SetDate("2021-01-01");
-        _eventDto.SetName("Disney on Ice");
-        _eventDto.SetTotalSpots(100);
-        _eventDto.SetPartner(new PartnerDto(_disney.GetId()));
+        _eventDto = new NewEventDto("Disney on Ice", "2021-01-01", 100, _disney);
 
         _expectedEvent = TestEventFactory(_eventDto);
         _controller = ControllerFactory();
@@ -45,15 +41,15 @@ public class EventControllerTest
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as EventDto;
+        var exeResultValue = exeResult.Value as NewEventDto;
 
         // Assert
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
 
         Assert.NotNull(exeResultValue);
-        Assert.Equal(DateTime.Parse(exeResultValue.GetDate()!), _expectedEvent.GetDate());
-        Assert.Equal(exeResultValue.GetTotalSpots(), _expectedEvent.GetTotalSpots());
-        Assert.Equal(exeResultValue.GetName(), _expectedEvent.GetName());
+        Assert.Equal(DateTime.Parse(exeResultValue.Date!), _expectedEvent.GetDate());
+        Assert.Equal(exeResultValue.TotalSpots, _expectedEvent.GetTotalSpots());
+        Assert.Equal(exeResultValue.Name, _expectedEvent.GetName());
     }
 
     [Fact(DisplayName = "Should buy an event ticket")]
@@ -62,12 +58,8 @@ public class EventControllerTest
         // Arrange  
         var johnDoe = new Customer(0, "John Doe", "123", "");
         var evnt = new Event(0, "Disney on Ice", DateTime.Now, 100, null);
-        var ticket = new Ticket(1, johnDoe, _expectedEvent,
-            TicketStatus.Pending, DateTime.Now,
-            DateTime.Now + TimeSpan.FromTicks(100));
 
-        var sub = new SubscribeDto();
-        sub.SetCustomerId(johnDoe.GetId());
+        var sub = new SubscribeDto(johnDoe.GetId());
 
         _customerRepositoryMock.Setup(x =>
                                       x.FindById(It.Is<long>(idReceived => idReceived.Equals(0))))
@@ -102,9 +94,9 @@ public class EventControllerTest
         return controller;
     }
 
-    private static Event TestEventFactory(EventDto evnt)
+    private static Event TestEventFactory(NewEventDto evnt)
     {
-        return new Event(evnt.GetId(), evnt.GetName(), DateTime.Parse(evnt.GetDate()!),
-            evnt.GetTotalSpots(), new HashSet<Ticket>());
+        return new Event(0, evnt.Name, DateTime.Parse(evnt.Date!),
+            evnt.TotalSpots, new HashSet<Ticket>());
     }
 }

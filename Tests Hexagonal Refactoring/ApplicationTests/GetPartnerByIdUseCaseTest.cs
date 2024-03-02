@@ -1,6 +1,7 @@
 ﻿using Hexagonal_Refactoring.Application.UseCases;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+
 public class GetPartnerByIdUseCaseTest
 {
     [Fact(DisplayName = "Should get a partner by id")]
@@ -43,7 +44,7 @@ public class GetPartnerByIdUseCaseTest
 
         Mock<IPartnerRepository> partnerRepositoryMock = new();
         partnerRepositoryMock.Setup(x => x.FindById(It.Is<long>(idReceived =>
-                           idReceived.Equals(expectedId))))
+                idReceived.Equals(expectedId))))
             .Returns(null as Partner);
 
         var service = new PartnerService(partnerRepositoryMock.Object);

@@ -1,6 +1,7 @@
 ﻿using Hexagonal_Refactoring.Application.UseCases;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+
 public class GetCustomerByIdUseCaseTest
 {
     [Fact(DisplayName = "Should get a client by id")]
@@ -43,7 +44,7 @@ public class GetCustomerByIdUseCaseTest
 
         Mock<ICustomerRepository> customerRepositoryMock = new();
         customerRepositoryMock.Setup(x => x.FindById(It.Is<long>(idReceived =>
-                           idReceived.Equals(expectedId))))
+                idReceived.Equals(expectedId))))
             .Returns(null as Customer);
 
         var service = new CustomerService(customerRepositoryMock.Object);

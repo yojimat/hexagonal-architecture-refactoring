@@ -11,11 +11,11 @@ public class GetPartnerByIdUseCase(IPartnerService partnerService)
         var output = partner == null
             ? null
             : new Output(partner.GetId(), partner.GetCnpj() ?? string.Empty, partner.GetEmail() ?? string.Empty,
-                partner.GetName());
+                partner.GetName() ?? string.Empty);
         return output;
     }
 
     public record Input(long Id);
 
-    public record Output(long Id, string Cnpj, string Email, string? Name);
+    public record Output(long Id, string Cnpj, string Email, string Name);
 }

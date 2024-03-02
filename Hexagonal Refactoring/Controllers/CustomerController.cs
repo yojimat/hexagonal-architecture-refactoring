@@ -12,13 +12,13 @@ public class CustomerController(
     GetCustomerByIdUseCase getCustomerByIdUseCase) : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create([FromBody] CustomerDto dto)
+    public IActionResult Create([FromBody] NewCustomerDto dto)
     {
         try
         {
             var output =
-                createCustomerUseCase.Execute(new CreateCustomerUseCase.Input(dto.GetCpf(), dto.GetEmail(),
-                    dto.GetName()));
+                createCustomerUseCase.Execute(new CreateCustomerUseCase.Input(dto.Cpf, dto.Email,
+                    dto.Name));
 
             return Created($"/customers/{output.Id}", output);
         }

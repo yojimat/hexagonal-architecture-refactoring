@@ -28,8 +28,8 @@ public class CustomerController(
         }
     }
 
-    [HttpGet("{id:long}")]
-    public IActionResult GetCustomer(long id)
+    [HttpGet("{id}")]
+    public IActionResult GetCustomer(string id)
     {
         var output = getCustomerByIdUseCase.Execute(new GetCustomerByIdUseCase.Input(id));
         return output == null ? NotFound() : Ok(output);

@@ -1,4 +1,5 @@
-﻿using Hexagonal_Refactoring.Application.UseCases;
+﻿using Hexagonal_Refactoring.Application.Entities;
+using Hexagonal_Refactoring.Application.UseCases;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
@@ -8,51 +9,40 @@ public class GetCustomerByIdUseCaseTest
     public void TestGet()
     {
         // Arrange
-        const long expectedId = 1;
         const string expectedCpf = "123.456.789-00";
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
 
-        var mockCustomer = new Customer(expectedId, expectedName, expectedCpf, expectedEmail);
+        var customer = Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
 
-        Mock<ICustomerRepository> customerRepositoryMock = new();
-        customerRepositoryMock.Setup(x => x.FindById(It.Is<long>(idReceived =>
-                idReceived.Equals(mockCustomer.GetId()))))
-            .Returns(mockCustomer);
+        var customerRepository = new InMemoryCustomerRepository();
+        customerRepository.Create(customer);
 
-        var service = new CustomerService(customerRepositoryMock.Object);
+        GetCustomerByIdUseCase.Input getInput = new(customer.CustomerId.ToString());
 
-        GetCustomerByIdUseCase.Input getInput = new(mockCustomer.GetId());
-
+        GetCustomerByIdUseCase useCase = new(customerRepository);
         // Act
-        GetCustomerByIdUseCase useCase = new(service);
         var output = useCase.Execute(getInput);
 
         // Assert
         Assert.NotNull(output);
-        Assert.Equal(output.Email, mockCustomer.GetEmail());
-        Assert.Equal(output.Cpf, mockCustomer.GetCpf());
-        Assert.Equal(output.Name, mockCustomer.GetName());
-        Assert.Equal(output.Id, mockCustomer.GetId());
+        Assert.Equal(expectedEmail, output.Email);
+        Assert.Equal(expectedCpf, output.Cpf);
+        Assert.Equal(expectedName, output.Name);
+        Assert.Equal(customer.CustomerId.ToString(), output.Id);
     }
 
     [Fact(DisplayName = "Should return null when client not found")]
     public void TestByIdWithInvalidId()
     {
         // Arrange
-        const long expectedId = 1;
+        GetCustomerByIdUseCase.Input getInput = new(Guid.NewGuid().ToString());
 
-        Mock<ICustomerRepository> customerRepositoryMock = new();
-        customerRepositoryMock.Setup(x => x.FindById(It.Is<long>(idReceived =>
-                idReceived.Equals(expectedId))))
-            .Returns(null as Customer);
+        var customerRepository = new InMemoryCustomerRepository();
 
-        var service = new CustomerService(customerRepositoryMock.Object);
-
-        GetCustomerByIdUseCase.Input getInput = new(expectedId);
+        GetCustomerByIdUseCase useCase = new(customerRepository);
 
         // Act
-        GetCustomerByIdUseCase useCase = new(service);
         var output = useCase.Execute(getInput);
 
         // Assert

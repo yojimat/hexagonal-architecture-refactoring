@@ -35,11 +35,10 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
 
-    // Reset database
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<EventContext>();
-    //context.Database.EnsureDeleted();
+    //context.Database.EnsureDeleted(); // Uncomment to reset local database
     context.Database.EnsureCreated();
 }
 

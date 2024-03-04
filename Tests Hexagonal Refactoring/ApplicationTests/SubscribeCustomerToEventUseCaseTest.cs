@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Hexagonal_Refactoring.Application.UseCases;
+using Hexagonal_Refactoring.Models;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 

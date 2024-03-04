@@ -1,5 +1,7 @@
 ﻿using System.Net.Mime;
 using Hexagonal_Refactoring.Application.UseCases;
+using Hexagonal_Refactoring.Models;
+using Hexagonal_Refactoring.Repositories;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
@@ -12,7 +14,7 @@ public class CustomerControllerTest
 
     public CustomerControllerTest()
     {
-        _customerDto = new NewCustomerDto("12345678901", "john.doe@gmail.com", "John Doe");
+        _customerDto = new NewCustomerDto("John Doe", "123.456.789-01", "johndoe@gmail.com");
 
         _expectedCustomer = TestCustomerFactory(_customerDto);
         _controller = ServiceMockSave(_expectedCustomer);
@@ -33,45 +35,13 @@ public class CustomerControllerTest
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
 
         Assert.NotNull(exeResultValue);
-        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
+        Assert.Equal(_expectedCustomer.GetEmail(), exeResultValue.Email);
+        Assert.Equal(_expectedCustomer.GetCpf(), exeResultValue.Cpf);
+        Assert.Equal(_expectedCustomer.GetName(), exeResultValue.Name);
+        Assert.False(string.IsNullOrEmpty(_expectedCustomer.GetId().ToString()));
     }
 
     [Fact(DisplayName = "Shouldn't create a client with duplicated CPF")]
-    public void TestCreateWithDuplicatedEmailShouldFail()
-    {
-        // Act
-        // Create the first client
-        var result = _controller.Create(_customerDto);
-        var exeResult = result as ObjectResult;
-
-        Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
-
-        _customerRepositoryMock.Setup(x =>
-                x.FindByCpf(It.Is<string>(cpfReceived => cpfReceived.Equals(_customerDto.Cpf))))
-            .Returns(_expectedCustomer);
-
-        // Create the second client with the same CPF
-        var result2 = _controller.Create(_customerDto);
-        var exeResult2 = result2 as ObjectResult;
-
-        // Assert
-        Assert.NotNull(exeResultValue);
-        Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
-        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
-
-        Assert.NotNull(exeResult2);
-        Assert.Equal(exeResult2.StatusCode, StatusCodes.Status422UnprocessableEntity);
-        Assert.Equal(exeResult2.Value, "Customer already exists.");
-    }
-
-    [Fact(DisplayName = "Shouldn't create a client with duplicated email")]
     public void TestCreateWithDuplicatedCpfShouldFail()
     {
         // Act
@@ -82,9 +52,6 @@ public class CustomerControllerTest
         Assert.NotNull(exeResult);
         var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
 
-        _customerRepositoryMock.Setup(x =>
-                x.FindByEmail(It.Is<string>(emailReceived => emailReceived.Equals(_customerDto.Email))))
-            .Returns(_expectedCustomer);
 
         // Create the second client with the same CPF
         var result2 = _controller.Create(_customerDto);
@@ -92,15 +59,45 @@ public class CustomerControllerTest
 
         // Assert
         Assert.NotNull(exeResultValue);
-        Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
-        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
+        Assert.Equal(StatusCodes.Status201Created, exeResult.StatusCode);
+        Assert.Equal(_expectedCustomer.GetEmail(), exeResultValue.Email);
+        Assert.Equal(_expectedCustomer.GetCpf(), exeResultValue.Cpf);
+        Assert.Equal(_expectedCustomer.GetName(), exeResultValue.Name);
+        Assert.False(string.IsNullOrEmpty(_expectedCustomer.GetId().ToString()));
 
         Assert.NotNull(exeResult2);
-        Assert.Equal(exeResult2.StatusCode, StatusCodes.Status422UnprocessableEntity);
-        Assert.Equal(exeResult2.Value, "Customer already exists.");
+        Assert.Equal(StatusCodes.Status422UnprocessableEntity, exeResult2.StatusCode);
+        Assert.Equal("Customer CPF already in use", exeResult2.Value);
+    }
+
+    [Fact(DisplayName = "Shouldn't create a client with duplicated email")]
+    public void TestCreateWithDuplicatedEmailShouldFail()
+    {
+        // Act
+        // Create the first client
+        var result = _controller.Create(_customerDto);
+        var exeResult = result as ObjectResult;
+
+        Assert.NotNull(exeResult);
+        var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
+
+        // Create the second client with the same Email
+
+        var customerDto2 = new NewCustomerDto("John Doe", "223.456.789-01", "johndoe@gmail.com");
+        var result2 = _controller.Create(customerDto2);
+        var exeResult2 = result2 as ObjectResult;
+
+        // Assert
+        Assert.NotNull(exeResultValue);
+        Assert.Equal(StatusCodes.Status201Created, exeResult.StatusCode);
+        Assert.Equal(_expectedCustomer.GetEmail(), exeResultValue.Email);
+        Assert.Equal(_expectedCustomer.GetCpf(), exeResultValue.Cpf);
+        Assert.Equal(_expectedCustomer.GetName(), exeResultValue.Name);
+        Assert.False(string.IsNullOrEmpty(_expectedCustomer.GetId().ToString()));
+
+        Assert.NotNull(exeResult2);
+        Assert.Equal(StatusCodes.Status422UnprocessableEntity, exeResult2.StatusCode);
+        Assert.Equal("Customer Email already in use", exeResult2.Value);
     }
 
     [Fact(DisplayName = "Should get a client by id")]
@@ -124,11 +121,11 @@ public class CustomerControllerTest
 
         // Assert 
         Assert.NotNull(getExeResult);
-        Assert.Equal(getExeResult.StatusCode, StatusCodes.Status200OK);
-        Assert.Equal(exeResultValue.Email, _expectedCustomer.GetEmail());
-        Assert.Equal(exeResultValue.Cpf, _expectedCustomer.GetCpf());
-        Assert.Equal(exeResultValue.Name, _expectedCustomer.GetName());
-        Assert.Equal(exeResultValue.Id, _expectedCustomer.GetId());
+        Assert.Equal(StatusCodes.Status200OK, getExeResult.StatusCode);
+        Assert.Equal(_expectedCustomer.GetEmail(), exeResultValue.Email);
+        Assert.Equal(_expectedCustomer.GetCpf(), exeResultValue.Cpf);
+        Assert.Equal(_expectedCustomer.GetName(), exeResultValue.Name);
+        Assert.False(string.IsNullOrEmpty(_expectedCustomer.GetId().ToString()));
     }
 
     private CustomerController ServiceMockSave(Customer expectedCustomer)
@@ -145,9 +142,10 @@ public class CustomerControllerTest
             HttpContext = httpContext
         };
 
-        var service = new CustomerService(_customerRepositoryMock.Object);
-        var createCustomerUseCase = new CreateCustomerUseCase(service);
-        var getCustomerByIdUseCase = new GetCustomerByIdUseCase(service);
+        var customerRepository = new InMemoryCustomerRepository();
+
+        var createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
+        var getCustomerByIdUseCase = new GetCustomerByIdUseCase(customerRepository);
 
         var controller = new CustomerController(createCustomerUseCase, getCustomerByIdUseCase)
         {
@@ -159,7 +157,7 @@ public class CustomerControllerTest
 
     private static Customer TestCustomerFactory(NewCustomerDto customer)
     {
-        return new Customer(0, customer.Cpf, customer.Name,
+        return new Customer(0, customer.Name, customer.Cpf,
             customer.Email);
     }
 }

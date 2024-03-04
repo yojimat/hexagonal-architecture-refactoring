@@ -1,20 +1,21 @@
-﻿using Hexagonal_Refactoring.Services;
+﻿using Hexagonal_Refactoring.Application.Entities;
+using Hexagonal_Refactoring.Application.Repositories;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
-public class GetCustomerByIdUseCase(ICustomerService customerService)
+public class GetCustomerByIdUseCase(ICustomerRepository customerRepository)
     : UseCase<GetCustomerByIdUseCase.Input, GetCustomerByIdUseCase.Output>
 {
-    public override Output? Execute(Input getInput)
+    public override Output? Execute(Input input)
     {
-        var customer = customerService.FindById(getInput.Id);
+        var customer = customerRepository.CustomerOfId(CustomerId.WithId(input.Id));
         var output = customer == null
             ? null
-            : new Output(customer.GetId(), customer.GetCpf(), customer.GetEmail(), customer.GetName());
+            : new Output(customer.CustomerId.ToString(), customer.Cpf, customer.Email, customer.Name);
         return output;
     }
 
-    public record Input(long Id);
+    public record Input(string Id);
 
-    public record Output(long Id, string Cpf, string Email, string Name);
+    public record Output(string Id, string Cpf, string Email, string Name);
 }

@@ -1,22 +1,22 @@
 ﻿using Hexagonal_Refactoring.Application.UseCases;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Hexagonal_Refactoring.Models;
+using Hexagonal_Refactoring.Repositories;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class EventControllerTest
 {
-    private readonly Mock<IEventRepository> _eventRepositoryMock = new();
-    private readonly Mock<ITicketRepository> _ticketRepositoryMock = new();
-    private readonly Mock<IPartnerRepository> _partnerRepositoryMock = new();
-    private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
     private readonly EventController _controller;
-    private readonly NewEventDto _eventDto;
-    private readonly Event _expectedEvent;
+    private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
     private readonly Partner _disney;
+    private readonly NewEventDto _eventDto;
+    private readonly Mock<IEventRepository> _eventRepositoryMock = new();
+    private readonly Event _expectedEvent;
+    private readonly Mock<IPartnerRepository> _partnerRepositoryMock = new();
+    private readonly Mock<ITicketRepository> _ticketRepositoryMock = new();
 
     public EventControllerTest()
     {
-
         _disney = new Partner(1, "Disney", "456", "disney@gmail.com");
         _eventDto = new NewEventDto("Disney on Ice", "2021-01-01", 100, _disney);
 
@@ -29,11 +29,11 @@ public class EventControllerTest
     {
         // Arrange
         _eventRepositoryMock.Setup(x =>
-                       x.Save(It.Is<Event>(cReceived => cReceived.Equals(_expectedEvent))))
-                   .Returns(_expectedEvent);
+                x.Save(It.Is<Event>(cReceived => cReceived.Equals(_expectedEvent))))
+            .Returns(_expectedEvent);
 
         _partnerRepositoryMock.Setup(x =>
-                           x.FindById(It.Is<long>(idReceived => idReceived.Equals(_disney.GetId()))))
+                x.FindById(It.Is<long>(idReceived => idReceived.Equals(_disney.GetId()))))
             .Returns(_disney);
 
         // Act
@@ -62,11 +62,11 @@ public class EventControllerTest
         var sub = new SubscribeDto(johnDoe.GetId());
 
         _customerRepositoryMock.Setup(x =>
-                                      x.FindById(It.Is<long>(idReceived => idReceived.Equals(0))))
+                x.FindById(It.Is<long>(idReceived => idReceived.Equals(0))))
             .Returns(johnDoe);
 
         _eventRepositoryMock.Setup(x =>
-                           x.FindById(It.Is<long>(idReceived => idReceived.Equals(_expectedEvent.GetId()))))
+                x.FindById(It.Is<long>(idReceived => idReceived.Equals(_expectedEvent.GetId()))))
             .Returns(_expectedEvent);
 
         _ticketRepositoryMock

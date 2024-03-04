@@ -11,7 +11,7 @@ public class GetCustomerByIdUseCase(ICustomerRepository customerRepository)
         var customer = customerRepository.CustomerOfId(CustomerId.WithId(input.Id));
         var output = customer == null
             ? null
-            : new Output(customer.CustomerId.ToString(), customer.Cpf, customer.Email, customer.Name);
+            : new Output(customer.CustomerId.ToString(), customer.Cpf, customer.Email.Value, customer.Name);
         return output;
     }
 

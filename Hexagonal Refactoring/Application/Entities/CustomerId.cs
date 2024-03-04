@@ -1,11 +1,9 @@
 ﻿namespace Hexagonal_Refactoring.Application.Entities;
 
+// TODO: I'm thinking of implementing an abstract class for Ids.
 public record CustomerId(Guid Id)
 {
-    public static CustomerId NewId()
-    {
-        return new CustomerId(Guid.NewGuid());
-    }
+    public static CustomerId NewId() => new(Guid.NewGuid());
 
     public static CustomerId WithId(string id)
     {
@@ -19,8 +17,5 @@ public record CustomerId(Guid Id)
         }
     }
 
-    public override string ToString()
-    {
-        return Id.ToString();
-    }
+    public override string ToString() => Id.ToString();
 }

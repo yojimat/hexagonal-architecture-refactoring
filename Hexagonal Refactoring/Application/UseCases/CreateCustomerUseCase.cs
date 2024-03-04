@@ -17,7 +17,7 @@ public class CreateCustomerUseCase(ICustomerRepository customerRepository)
 
         var customer = customerRepository.Create(Customer.NewCustomer(input.Name, input.Cpf, input.Email));
 
-        return new Output(customer.CustomerId.ToString(), customer.Cpf, customer.Email,
+        return new Output(customer.CustomerId.ToString(), customer.Cpf, customer.Email.Value,
             customer.Name);
     }
 

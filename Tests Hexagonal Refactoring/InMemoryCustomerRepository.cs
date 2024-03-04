@@ -28,7 +28,7 @@ public class InMemoryCustomerRepository : ICustomerRepository
     {
         _customers.Add(customer.CustomerId.ToString(), customer);
         _customersByCpf.Add(customer.Cpf, customer);
-        _customersByEmail.Add(customer.Email, customer);
+        _customersByEmail.Add(customer.Email.Value, customer);
         return customer;
     }
 
@@ -36,7 +36,7 @@ public class InMemoryCustomerRepository : ICustomerRepository
     {
         _customers.Add(customer.CustomerId.ToString(), customer);
         _customersByCpf.Add(customer.Cpf, customer);
-        _customersByEmail.Add(customer.Email, customer);
+        _customersByEmail.Add(customer.Email.Value, customer);
         return customer;
     }
 

@@ -4,8 +4,6 @@ namespace Hexagonal_Refactoring.Application.Entities;
 
 public partial record Email
 {
-    public string Value { get; }
-
     public Email(string value)
     {
         var emailIsValid = EmailValidation().IsMatch(value);
@@ -14,6 +12,8 @@ public partial record Email
 
         Value = value;
     }
+
+    public string Value { get; }
 
     public override string ToString() => Value;
 

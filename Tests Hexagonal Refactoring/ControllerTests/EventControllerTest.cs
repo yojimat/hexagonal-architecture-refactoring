@@ -1,6 +1,9 @@
-﻿using Hexagonal_Refactoring.Application.UseCases;
-using Hexagonal_Refactoring.Models;
+﻿using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Repositories;
+using Customer = Hexagonal_Refactoring.Models.Customer;
+using ICustomerRepository = Hexagonal_Refactoring.Repositories.ICustomerRepository;
+using IPartnerRepository = Hexagonal_Refactoring.Repositories.IPartnerRepository;
+using Partner = Hexagonal_Refactoring.Models.Partner;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 

@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.UseCases;
-using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Repositories;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
@@ -11,31 +8,21 @@ public class CreatePartnerUseCaseTest
     public void TestCreatePartner()
     {
         // Given
-        const string expectedCpnj = "123.456.789-00";
+        const string expectedCnpj = "11.545.127/0001-02";
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
 
-        var mockPartner = new Partner(1, expectedName, expectedCpnj, expectedEmail);
+        CreatePartnerUseCase.Input createInput = new(expectedCnpj, expectedEmail, expectedName);
 
-        CreatePartnerUseCase.Input createInput = new(expectedCpnj, expectedEmail, expectedName);
-
-        Mock<IPartnerRepository> partnerRepository = new();
-        partnerRepository.Setup(x =>
-                x.Save(It.Is<Partner>(c => c.GetCnpj() == expectedCpnj &&
-                                           c.GetEmail() == expectedEmail &&
-                                           c.GetName() == expectedName)))
-            .Returns(mockPartner);
-
-        var service = new PartnerService(partnerRepository.Object);
+        var repository = new InMemoryPartnerRepository();
+        CreatePartnerUseCase useCase = new(repository);
 
         // When
-        CreatePartnerUseCase useCase = new(service);
         var output = useCase.Execute(createInput);
 
         // Then
-        Assert.NotNull(output);
-        Assert.Equal(1, output.Id);
-        Assert.Equal(expectedCpnj, output.Cnpj);
+        Assert.False(string.IsNullOrEmpty(output.Id));
+        Assert.Equal(expectedCnpj, output.Cnpj);
         Assert.Equal(expectedName, output.Name);
         Assert.Equal(expectedEmail, output.Email);
     }
@@ -44,23 +31,19 @@ public class CreatePartnerUseCaseTest
     public void TestCreateWithDuplicatedCnpjShouldFail()
     {
         // Given
-        const string expectedCnpj = "123.456.789-00";
+        const string expectedCnpj = "11.545.127/0001-02";
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
-        const string expectedExceptionMessage = "Partner already exists.";
+        const string expectedExceptionMessage = "Partner CNPJ already in use";
 
-        var mockPartner = new Partner(1, expectedName, expectedCnpj, expectedEmail);
+        var newPartner = Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
+
+        var partnerRepository = new InMemoryPartnerRepository();
+        partnerRepository.Create(newPartner);
 
         CreatePartnerUseCase.Input createInput = new(expectedCnpj, expectedEmail, expectedName);
 
-        Mock<IPartnerRepository> partnerRepositoryMock = new();
-        partnerRepositoryMock.Setup(x =>
-                x.FindByCnpj(It.Is<string>(cpf => cpf.Equals(expectedCnpj))))
-            .Returns(mockPartner);
-
-        var service = new PartnerService(partnerRepositoryMock.Object);
-        // When
-        CreatePartnerUseCase useCase = new(service);
+        CreatePartnerUseCase useCase = new(partnerRepository);
 
         // Then
         var actualException = Assert.Throws<ValidationException>(() => useCase.Execute(createInput));
@@ -73,24 +56,20 @@ public class CreatePartnerUseCaseTest
     public void TestCreateWithDuplicatedEmailShouldFail()
     {
         // Given
-        const string expectedCnpj = "123.456.789-00";
+        const string expectedCnpj = "11.545.127/0001-02";
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
-        const string expectedExceptionMessage = "Partner already exists.";
+        const string expectedExceptionMessage = "Partner Email already in use";
 
-        var mockPartner = new Partner(1, expectedName, expectedCnpj, expectedEmail);
+        var customer = Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
 
-        Mock<IPartnerRepository> partnerRepositoryMock = new();
-        partnerRepositoryMock.Setup(x =>
-                x.FindByEmail(It.Is<string>(email => email.Equals(expectedEmail))))
-            .Returns(mockPartner);
-
-        var service = new PartnerService(partnerRepositoryMock.Object);
+        var customerRepository = new InMemoryPartnerRepository();
+        customerRepository.Create(customer);
+        customerRepository.DeleteFromCnpjDictionary(customer);
 
         CreatePartnerUseCase.Input createInput = new(expectedCnpj, expectedEmail, expectedName);
 
-        // When
-        CreatePartnerUseCase useCase = new(service);
+        CreatePartnerUseCase useCase = new(customerRepository);
 
         // Then
         var actualException = Assert.Throws<ValidationException>(() => useCase.Execute(createInput));

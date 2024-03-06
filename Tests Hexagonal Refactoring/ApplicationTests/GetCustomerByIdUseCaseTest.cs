@@ -1,7 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Entities;
-using Hexagonal_Refactoring.Application.UseCases;
-
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+﻿namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
 public class GetCustomerByIdUseCaseTest
 {

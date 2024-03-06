@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.UseCases;
 using Hexagonal_Refactoring.Models;
+using Customer = Hexagonal_Refactoring.Models.Customer;
+using Event = Hexagonal_Refactoring.Models.Event;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 

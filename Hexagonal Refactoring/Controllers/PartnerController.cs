@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Hexagonal_Refactoring.Application.UseCases;
 using Hexagonal_Refactoring.DTOs;
-using Hexagonal_Refactoring.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hexagonal_Refactoring.Controllers;
@@ -20,7 +19,7 @@ public class PartnerController(CreatePartnerUseCase createPartnerUseCase, GetPar
                 createPartnerUseCase.Execute(new CreatePartnerUseCase.Input(dto.Cnpj, dto.Email,
                     dto.Name));
 
-            return Created($"api/partners/{output.Id}", dto);
+            return Created($"api/partners/{output.Id}", output);
         }
         catch (ValidationException e)
         {
@@ -28,13 +27,12 @@ public class PartnerController(CreatePartnerUseCase createPartnerUseCase, GetPar
         }
     }
 
-    [HttpGet("{id:long}")]
-    public IActionResult GetPartner(long id)
+    [HttpGet("{id}")]
+    public IActionResult GetPartner(string id)
     {
         var output = getPartnerByIdUseCase.Execute(new GetPartnerByIdUseCase.Input(id));
         return output == null
             ? NotFound()
-            : Ok(new Partner
-                (output.Id, output.Name, output.Cnpj, output.Email));
+            : Ok(output);
     }
 }

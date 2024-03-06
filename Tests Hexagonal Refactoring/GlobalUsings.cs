@@ -5,3 +5,7 @@ global using Hexagonal_Refactoring.Controllers;
 global using Hexagonal_Refactoring.DTOs;
 global using Hexagonal_Refactoring.Services;
 global using Microsoft.AspNetCore.Mvc;
+global using Tests_Hexagonal_Refactoring.InMemoryRepositories;
+global using Hexagonal_Refactoring.Application.Entities;
+global using Hexagonal_Refactoring.Application.UseCases;
+global using Hexagonal_Refactoring.Application.Repositories;

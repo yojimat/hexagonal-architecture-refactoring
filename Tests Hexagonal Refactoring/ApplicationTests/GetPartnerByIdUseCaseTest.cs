@@ -1,8 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.UseCases;
-using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Repositories;
-
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+﻿namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
 public class GetPartnerByIdUseCaseTest
 {
@@ -10,51 +6,41 @@ public class GetPartnerByIdUseCaseTest
     public void TestGet()
     {
         // Arrange
-        const long expectedId = 1;
-        const string expectedCnpj = "123.456.789-00";
+        const string expectedCnpj = "11.545.127/0001-02";
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
 
-        var mockPartner = new Partner(expectedId, expectedName, expectedCnpj, expectedEmail);
+        var partner = Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
 
-        Mock<IPartnerRepository> partnerRepositoryMock = new();
-        partnerRepositoryMock.Setup(x => x.FindById(It.Is<long>(idReceived =>
-                idReceived.Equals(mockPartner.GetId()))))
-            .Returns(mockPartner);
+        var customerRepository = new InMemoryPartnerRepository();
+        customerRepository.Create(partner);
 
-        var service = new PartnerService(partnerRepositoryMock.Object);
+        GetPartnerByIdUseCase.Input getInput = new(partner.PartnerId.ToString());
 
-        GetPartnerByIdUseCase.Input getInput = new(mockPartner.GetId());
+        GetPartnerByIdUseCase useCase = new(customerRepository);
 
         // Act
-        GetPartnerByIdUseCase useCase = new(service);
         var output = useCase.Execute(getInput);
 
         // Assert
         Assert.NotNull(output);
-        Assert.Equal(output.Email, mockPartner.GetEmail());
-        Assert.Equal(output.Cnpj, mockPartner.GetCnpj());
-        Assert.Equal(output.Name, mockPartner.GetName());
-        Assert.Equal(output.Id, mockPartner.GetId());
+        Assert.Equal(expectedEmail, output.Email);
+        Assert.Equal(expectedCnpj, output.Cnpj);
+        Assert.Equal(expectedName, output.Name);
+        Assert.Equal(partner.PartnerId.ToString(), output.Id);
     }
 
     [Fact(DisplayName = "Should return null when partner not found")]
     public void TestWithInvalidId()
     {
         // Arrange
-        const long expectedId = 1;
+        GetPartnerByIdUseCase.Input getInput = new(Guid.NewGuid().ToString());
 
-        Mock<IPartnerRepository> partnerRepositoryMock = new();
-        partnerRepositoryMock.Setup(x => x.FindById(It.Is<long>(idReceived =>
-                idReceived.Equals(expectedId))))
-            .Returns(null as Partner);
+        var partnerRepository = new InMemoryPartnerRepository();
 
-        var service = new PartnerService(partnerRepositoryMock.Object);
-
-        GetPartnerByIdUseCase.Input getInput = new(expectedId);
+        GetPartnerByIdUseCase useCase = new(partnerRepository);
 
         // Act
-        GetPartnerByIdUseCase useCase = new(service);
         var output = useCase.Execute(getInput);
 
         // Assert

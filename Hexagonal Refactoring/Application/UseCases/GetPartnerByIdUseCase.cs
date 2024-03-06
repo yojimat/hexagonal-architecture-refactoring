@@ -1,21 +1,22 @@
-﻿using Hexagonal_Refactoring.Services;
+﻿using Hexagonal_Refactoring.Application.Entities;
+using Hexagonal_Refactoring.Application.Repositories;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
-public class GetPartnerByIdUseCase(IPartnerService partnerService)
+public class GetPartnerByIdUseCase(IPartnerRepository partnerRepository)
     : UseCase<GetPartnerByIdUseCase.Input, GetPartnerByIdUseCase.Output>
 {
-    public override Output? Execute(Input getInput)
+    public override Output? Execute(Input input)
     {
-        var partner = partnerService.FindById(getInput.Id);
+        var partner = partnerRepository.PartnerOfId(PartnerId.WithId(input.Id));
         var output = partner == null
             ? null
-            : new Output(partner.GetId(), partner.GetCnpj() ?? string.Empty, partner.GetEmail() ?? string.Empty,
-                partner.GetName() ?? string.Empty);
+            : new Output(partner.PartnerId.ToString(), partner.Cnpj, partner.Email.Value,
+                partner.Name);
         return output;
     }
 
-    public record Input(long Id);
+    public record Input(string Id);
 
-    public record Output(long Id, string Cnpj, string Email, string Name);
+    public record Output(string Id, string Cnpj, string Email, string Name);
 }

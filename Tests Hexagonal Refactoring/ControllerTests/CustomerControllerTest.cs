@@ -1,7 +1,5 @@
 ﻿using System.Net.Mime;
-using Hexagonal_Refactoring.Application.UseCases;
-using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Repositories;
+using Customer = Hexagonal_Refactoring.Models.Customer;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
@@ -9,7 +7,6 @@ public class CustomerControllerTest
 {
     private readonly CustomerController _controller;
     private readonly NewCustomerDto _customerDto;
-    private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
     private readonly Customer _expectedCustomer;
 
     public CustomerControllerTest()
@@ -17,7 +14,7 @@ public class CustomerControllerTest
         _customerDto = new NewCustomerDto("John Doe", "123.456.789-01", "johndoe@gmail.com");
 
         _expectedCustomer = TestCustomerFactory(_customerDto);
-        _controller = ServiceMockSave(_expectedCustomer);
+        _controller = ServiceMockSave();
     }
 
     [Fact(DisplayName = "Should create a client")]
@@ -103,12 +100,6 @@ public class CustomerControllerTest
     [Fact(DisplayName = "Should get a client by id")]
     public void TestGet()
     {
-        // Arrange
-        _customerRepositoryMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(_expectedCustomer.GetId()))))
-            .Returns(_expectedCustomer);
-
         // Act
         var result = _controller.Create(_customerDto);
         var exeResult = result as ObjectResult;
@@ -117,23 +108,23 @@ public class CustomerControllerTest
         Assert.NotNull(exeResultValue);
 
         var getResult = _controller.GetCustomer(exeResultValue.Id);
+
         var getExeResult = getResult as ObjectResult;
 
-        // Assert 
         Assert.NotNull(getExeResult);
+
+        var getExeResultValue = getExeResult.Value as GetCustomerByIdUseCase.Output;
+
+        // Assert 
+        Assert.NotNull(getExeResultValue);
         Assert.Equal(StatusCodes.Status200OK, getExeResult.StatusCode);
-        Assert.Equal(_expectedCustomer.GetEmail(), exeResultValue.Email);
-        Assert.Equal(_expectedCustomer.GetCpf(), exeResultValue.Cpf);
-        Assert.Equal(_expectedCustomer.GetName(), exeResultValue.Name);
-        Assert.False(string.IsNullOrEmpty(_expectedCustomer.GetId().ToString()));
+        Assert.Equal(_expectedCustomer.GetEmail(), getExeResultValue.Email);
+        Assert.Equal(_expectedCustomer.GetCpf(), getExeResultValue.Cpf);
+        Assert.Equal(_expectedCustomer.GetName(), getExeResultValue.Name);
     }
 
-    private CustomerController ServiceMockSave(Customer expectedCustomer)
+    private static CustomerController ServiceMockSave()
     {
-        _customerRepositoryMock.Setup(x =>
-                x.Save(It.Is<Customer>(cReceived => cReceived.Equals(expectedCustomer))))
-            .Returns(expectedCustomer);
-
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.ContentType = MediaTypeNames.Application.Json;
 
@@ -155,9 +146,7 @@ public class CustomerControllerTest
         return controller;
     }
 
-    private static Customer TestCustomerFactory(NewCustomerDto customer)
-    {
-        return new Customer(0, customer.Name, customer.Cpf,
+    private static Customer TestCustomerFactory(NewCustomerDto customer) =>
+        new(0, customer.Name, customer.Cpf,
             customer.Email);
-    }
 }

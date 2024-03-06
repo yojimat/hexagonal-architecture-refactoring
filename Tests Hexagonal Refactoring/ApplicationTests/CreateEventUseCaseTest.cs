@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.UseCases;
 using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Repositories;
+using IPartnerRepository = Hexagonal_Refactoring.Repositories.IPartnerRepository;
+using Partner = Hexagonal_Refactoring.Models.Partner;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 

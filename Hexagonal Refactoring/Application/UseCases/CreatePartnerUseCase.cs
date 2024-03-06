@@ -1,31 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Services;
+using Hexagonal_Refactoring.Application.Entities;
+using Hexagonal_Refactoring.Application.Repositories;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
-public class CreatePartnerUseCase(IPartnerService partnerService)
+public class CreatePartnerUseCase(IPartnerRepository partnerRepository)
     : UseCase<CreatePartnerUseCase.Input, CreatePartnerUseCase.Output>
 {
     public override Output Execute(Input input)
     {
-        if (partnerService.FindByCnpj(input.Cnpj) != null)
-            throw new ValidationException("Partner already exists.");
+        if (partnerRepository.PartnerOfCnpj(input.Cnpj) != null)
+            throw new ValidationException("Partner CNPJ already in use");
 
-        if (partnerService.FindByEmail(input.Email) != null)
-            throw new ValidationException("Partner already exists.");
+        if (partnerRepository.PartnerOfEmail(input.Email) != null)
+            throw new ValidationException("Partner Email already in use");
 
-        var partner = new Partner();
-        partner.SetName(input.Name);
-        partner.SetCnpj(input.Cnpj);
-        partner.SetEmail(input.Email);
+        var partner = partnerRepository.Create(Partner.NewPartner(input.Name, input.Cnpj, input.Email));
 
-        partner = partnerService.Save(partner);
-
-        return new Output(partner.GetId(), partner.GetCnpj(), partner.GetEmail(), partner.GetName());
+        return new Output(partner.PartnerId.ToString(), partner.Cnpj, partner.Email.Value, partner.Name);
     }
 
     public record Input(string Cnpj, string Email, string Name);
 
-    public record Output(long Id, string Cnpj, string Email, string Name);
+    public record Output(string Id, string Cnpj, string Email, string Name);
 }

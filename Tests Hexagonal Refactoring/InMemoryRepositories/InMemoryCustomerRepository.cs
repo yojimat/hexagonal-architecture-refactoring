@@ -1,7 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Entities;
-using Hexagonal_Refactoring.Application.Repositories;
-
-namespace Tests_Hexagonal_Refactoring;
+﻿namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
 
 public class InMemoryCustomerRepository : ICustomerRepository
 {
@@ -9,20 +6,9 @@ public class InMemoryCustomerRepository : ICustomerRepository
     private readonly Dictionary<string, Customer> _customersByCpf = [];
     private readonly Dictionary<string, Customer> _customersByEmail = [];
 
-    public Customer? CustomerOfId(CustomerId id)
-    {
-        return _customers.GetValueOrDefault(id.Id.ToString());
-    }
-
-    public Customer? CustomerOfCpf(string cpf)
-    {
-        return _customersByCpf.GetValueOrDefault(cpf);
-    }
-
-    public Customer? CustomerOfEmail(string email)
-    {
-        return _customersByEmail.GetValueOrDefault(email);
-    }
+    public Customer? CustomerOfId(CustomerId id) => _customers.GetValueOrDefault(id.Id.ToString());
+    public Customer? CustomerOfCpf(string cpf) => _customersByCpf.GetValueOrDefault(cpf);
+    public Customer? CustomerOfEmail(string email) => _customersByEmail.GetValueOrDefault(email);
 
     public Customer Create(Customer customer)
     {
@@ -41,8 +27,5 @@ public class InMemoryCustomerRepository : ICustomerRepository
     }
 
     // For tests purposes
-    public void DeleteFromCpfDictionary(Customer customer)
-    {
-        _customersByCpf.Remove(customer.Cpf);
-    }
+    public void DeleteFromCpfDictionary(Customer customer) => _customersByCpf.Remove(customer.Cpf);
 }

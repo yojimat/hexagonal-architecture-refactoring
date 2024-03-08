@@ -14,15 +14,15 @@ public class EventController(
     [HttpPost]
     public IActionResult Create([FromBody] NewEventDto dto)
     {
-        if (dto.Partner is null) return BadRequest("Partner is required");
+        if (string.IsNullOrEmpty(dto.PartnerId)) return BadRequest("PartnerId is required");
 
         try
         {
             var output = createEventUseCase.Execute(new CreateEventUseCase.Input(dto.Name ?? string.Empty,
                 dto.Date ?? string.Empty, dto.TotalSpots,
-                dto.Partner.GetId()));
+                dto.PartnerId));
 
-            return Created($"/events/{output.Id}", dto);
+            return Created($"/events/{output.EventId}", output);
         }
         catch (ValidationException ex)
         {

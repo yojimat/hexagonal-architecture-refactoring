@@ -1,30 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Services;
+﻿using Hexagonal_Refactoring.Application.Entities;
+using Hexagonal_Refactoring.Application.Repositories;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
-public class CreateEventUseCase(IPartnerService partnerService, IEventService eventService)
+public class CreateEventUseCase(IPartnerRepository partnerRepository, IEventRepository eventRepository)
     : UseCase<CreateEventUseCase.Input, CreateEventUseCase.Output>
 {
     public override Output Execute(Input input)
     {
-        var partner = partnerService.FindById(input.PartnerId);
+        var partner = partnerRepository.PartnerOfId(PartnerId.WithId(input.PartnerId)) ?? throw new Exception("Partner not found");
 
-        if (partner == null) throw new ValidationException("Partner not found");
+        var newEvent = eventRepository.Create(Event.NewEvent(input.Name, input.Date, input.TotalSpots, partner.PartnerId));
 
-        var evnt = new Event();
-        evnt.SetDate(DateTime.Parse(input.Date));
-        evnt.SetName(input.Name);
-        evnt.SetTotalSpots((int)input.TotalSpots);
-        evnt.SetPartner(partner);
-
-        var newEvent = eventService.Save(evnt);
-
-        return new Output(newEvent.GetId(), newEvent.GetPartner().GetId());
+        return new Output(newEvent.EventId.ToString(), newEvent.PartnerId.ToString());
     }
 
-    public record Input(string Name, string Date, long TotalSpots, long PartnerId);
-
-    public record Output(long Id, long PartnerId);
+    public record Input(string Name, string Date, int TotalSpots, string PartnerId);
+    public record Output(string EventId, string PartnerId);
 }

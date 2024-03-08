@@ -2,7 +2,7 @@
 
 namespace Hexagonal_Refactoring.Repositories;
 
-public interface IPartnerRepository : ICrudRepository<Partner, long>
+public interface IPartnerRepository : ICrudRepository<Partner, string>
 {
     Partner? FindByCnpj(string? cnpj);
     Partner? FindByEmail(string? email);

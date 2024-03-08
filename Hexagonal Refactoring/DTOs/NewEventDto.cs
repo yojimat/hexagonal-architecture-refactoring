@@ -1,5 +1,3 @@
-﻿using Hexagonal_Refactoring.Models;
+﻿namespace Hexagonal_Refactoring.DTOs;
 
-namespace Hexagonal_Refactoring.DTOs;
-
-public record NewEventDto(string? Name, string? Date, int TotalSpots, Partner? Partner);
+public record NewEventDto(string? Name, string? Date, int TotalSpots, string PartnerId);

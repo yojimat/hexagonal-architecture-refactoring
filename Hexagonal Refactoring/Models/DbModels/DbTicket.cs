@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Hexagonal_Refactoring.Models.DbModels;
 
 [Table("Tickets")]
-[PrimaryKey("Id")]
+[PrimaryKey("EventId")]
 public class DbTicket : Ticket
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

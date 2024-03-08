@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Hexagonal_Refactoring.Models.DbModels;
 
 [Table("Events")]
-[PrimaryKey("Id")]
+[PrimaryKey("EventId")]
 public class DbEvent : Event
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,7 +14,7 @@ public class DbEvent : Event
         init => SetId(value);
     }
 
-    public long PartnerId
+    public string PartnerId
     {
         get => GetPartnerId();
         set => SetPartnerId(value);
@@ -38,12 +38,12 @@ public class DbEvent : Event
         init => SetTotalSpots(value);
     }
 
-    private long GetPartnerId()
+    private string GetPartnerId()
     {
         return GetPartner().GetId();
     }
 
-    private void SetPartnerId(long value)
+    private void SetPartnerId(string value)
     {
         GetPartner().SetId(value);
     }

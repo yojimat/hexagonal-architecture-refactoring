@@ -13,7 +13,7 @@ public class PartnerRepository(EventContext eventContext, IMapper mapper) : IPar
         throw new NotImplementedException();
     }
 
-    public Partner? FindById(long id)
+    public Partner? FindById(string id)
     {
         return eventContext.Partners.AsNoTracking().FirstOrDefault(p => p.Id == id);
     }

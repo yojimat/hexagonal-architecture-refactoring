@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Hexagonal_Refactoring.Models.DbModels;
 
 [Table("Customers")]
-[PrimaryKey("Id")]
+[PrimaryKey("EventId")]
 public class DbCustomer : Customer
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

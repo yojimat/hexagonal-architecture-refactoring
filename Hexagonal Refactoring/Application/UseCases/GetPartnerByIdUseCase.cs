@@ -17,6 +17,5 @@ public class GetPartnerByIdUseCase(IPartnerRepository partnerRepository)
     }
 
     public record Input(string Id);
-
     public record Output(string Id, string Cnpj, string Email, string Name);
 }

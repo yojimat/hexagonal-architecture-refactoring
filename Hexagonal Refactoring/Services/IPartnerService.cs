@@ -5,7 +5,7 @@ namespace Hexagonal_Refactoring.Services;
 public interface IPartnerService
 {
     Partner? Save(Partner partner);
-    Partner? FindById(long id);
+    Partner? FindById(string id);
     Partner? FindByCnpj(string cnpj);
     Partner? FindByEmail(string email);
 }

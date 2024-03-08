@@ -1,10 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Repositories;
-using IPartnerRepository = Hexagonal_Refactoring.Repositories.IPartnerRepository;
-using Partner = Hexagonal_Refactoring.Models.Partner;
-
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+﻿namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
 public class CreateEventUseCaseTest
 {
@@ -14,39 +8,29 @@ public class CreateEventUseCaseTest
         // Given
         const string expectedName = "Event Name";
         const int expectedTotalSpots = 100;
-        const long partnerId = 1;
-        var expectedDate = DateTime.Now;
+        var expectedDate = DateTime.Now.ToShortDateString();
 
-        var mockPartner = new Partner(partnerId, "", "", "");
-        var mockEvent = new Event(1, expectedName, expectedDate, expectedTotalSpots, new HashSet<Ticket>());
-        mockEvent.SetPartner(mockPartner);
+        const string expectedCnpj = "11.545.127/0001-02";
+        const string partnerExpectedName = "John Doe";
+        const string expectedEmail = "test@test.com";
 
-        CreateEventUseCase.Input createInput = new(expectedName,
-            expectedDate.ToShortDateString(),
-            expectedTotalSpots,
-            partnerId);
+        var partnerRepository = new InMemoryPartnerRepository();
+        CreatePartnerUseCase.Input partnerInput = new(expectedCnpj, expectedEmail, partnerExpectedName);
+        CreatePartnerUseCase createPartnerUseCase = new(partnerRepository);
+        var partnerOutput = createPartnerUseCase.Execute(partnerInput);
 
-        Mock<ITicketRepository> ticketRepository = new();
-        Mock<IEventRepository> eventRepository = new();
-        eventRepository.Setup(x => x.Save(It.Is<Event>(e => e.GetName() == expectedName &&
-                                                            e.GetTotalSpots() == expectedTotalSpots)))
-            .Returns(mockEvent);
+        CreateEventUseCase.Input eventInput = new(expectedName, expectedDate, expectedTotalSpots, partnerOutput.Id);
 
-        Mock<IPartnerRepository> partnerRepository = new();
-        partnerRepository.Setup(x => x.FindById(It.Is<long>(id => id == partnerId)))
-            .Returns(mockPartner);
-
-        var partnerService = new PartnerService(partnerRepository.Object);
-        var eventService = new EventService(eventRepository.Object, ticketRepository.Object);
+        var eventRepository = new InMemoryEventRepository();
+        CreateEventUseCase useCase = new(partnerRepository, eventRepository);
 
         // When
-        CreateEventUseCase useCase = new(partnerService, eventService);
-        var output = useCase.Execute(createInput);
+        var eventOutput = useCase.Execute(eventInput);
 
         // Then
-        Assert.NotNull(output);
-        Assert.Equal(mockEvent.GetId(), output.Id);
-        Assert.Equal(mockEvent.GetPartner().GetId(), output.Id);
+        Assert.NotNull(eventOutput);
+        Assert.False(string.IsNullOrEmpty(eventOutput.EventId));
+        Assert.Equal(eventOutput.PartnerId, partnerOutput.Id);
     }
 
     [Fact(DisplayName = "Should throw exception when partner not found")]
@@ -55,27 +39,15 @@ public class CreateEventUseCaseTest
         // Given
         const string expectedName = "Event Name";
         const int expectedTotalSpots = 100;
-        const long partnerId = 1;
-        var expectedDate = DateTime.Now;
+        var expectedDate = DateTime.Now.ToShortDateString();
 
-        CreateEventUseCase.Input createInput = new(expectedName,
-            expectedDate.ToShortDateString(),
-            expectedTotalSpots,
-            partnerId);
+        CreateEventUseCase.Input eventInput = new(expectedName, expectedDate, expectedTotalSpots, Guid.NewGuid().ToString());
 
-        Mock<ITicketRepository> ticketRepository = new();
-        Mock<IEventRepository> eventRepository = new();
-        Mock<IPartnerRepository> partnerRepository = new();
-        partnerRepository.Setup(x => x.FindById(It.Is<long>(id => id == partnerId)))
-            .Returns((Partner?)null);
-
-        var partnerService = new PartnerService(partnerRepository.Object);
-        var eventService = new EventService(eventRepository.Object, ticketRepository.Object);
-
-        // When
-        CreateEventUseCase useCase = new(partnerService, eventService);
+        var eventRepository = new InMemoryEventRepository();
+        var partnerRepository = new InMemoryPartnerRepository();
+        CreateEventUseCase useCase = new(partnerRepository, eventRepository);
 
         // Then
-        Assert.Throws<ValidationException>(() => useCase.Execute(createInput));
+        Assert.Throws<Exception>(() => useCase.Execute(eventInput));
     }
 }

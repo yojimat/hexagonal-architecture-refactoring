@@ -21,6 +21,5 @@ public class CreatePartnerUseCase(IPartnerRepository partnerRepository)
     }
 
     public record Input(string Cnpj, string Email, string Name);
-
     public record Output(string Id, string Cnpj, string Email, string Name);
 }

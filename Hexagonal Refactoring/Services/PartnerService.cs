@@ -10,7 +10,7 @@ public class PartnerService(IPartnerRepository repository) : IPartnerService
         return repository.Save(partner);
     }
 
-    public Partner? FindById(long id)
+    public Partner? FindById(string id)
     {
         return repository.FindById(id);
     }

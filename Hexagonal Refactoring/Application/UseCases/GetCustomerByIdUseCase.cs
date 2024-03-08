@@ -16,6 +16,5 @@ public class GetCustomerByIdUseCase(ICustomerRepository customerRepository)
     }
 
     public record Input(string Id);
-
     public record Output(string Id, string Cpf, string Email, string Name);
 }

@@ -22,6 +22,5 @@ public class CreateCustomerUseCase(ICustomerRepository customerRepository)
     }
 
     public record Input(string Cpf, string Email, string Name);
-
     public record Output(string Id, string Cpf, string Email, string Name);
 }

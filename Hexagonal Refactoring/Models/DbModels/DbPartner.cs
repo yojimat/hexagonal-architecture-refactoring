@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Hexagonal_Refactoring.Models.DbModels;
 
 [Table("Partners")]
-[PrimaryKey("Id")]
+[PrimaryKey("EventId")]
 public class DbPartner : Partner
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id
+    public string Id
     {
         get => GetId();
         init => SetId(value);

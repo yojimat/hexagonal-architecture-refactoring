@@ -1,64 +1,83 @@
 ﻿using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Repositories;
 using Customer = Hexagonal_Refactoring.Models.Customer;
+using Event = Hexagonal_Refactoring.Models.Event;
 using ICustomerRepository = Hexagonal_Refactoring.Repositories.ICustomerRepository;
-using IPartnerRepository = Hexagonal_Refactoring.Repositories.IPartnerRepository;
-using Partner = Hexagonal_Refactoring.Models.Partner;
+using IEventRepository = Hexagonal_Refactoring.Repositories.IEventRepository;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class EventControllerTest
 {
-    private readonly EventController _controller;
     private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
-    private readonly Partner _disney;
-    private readonly NewEventDto _eventDto;
     private readonly Mock<IEventRepository> _eventRepositoryMock = new();
-    private readonly Event _expectedEvent;
-    private readonly Mock<IPartnerRepository> _partnerRepositoryMock = new();
     private readonly Mock<ITicketRepository> _ticketRepositoryMock = new();
-
-    public EventControllerTest()
-    {
-        _disney = new Partner(1, "Disney", "456", "disney@gmail.com");
-        _eventDto = new NewEventDto("Disney on Ice", "2021-01-01", 100, _disney);
-
-        _expectedEvent = TestEventFactory(_eventDto);
-        _controller = ControllerFactory();
-    }
 
     [Fact(DisplayName = "Should create an event")]
     public void TestCreate()
     {
         // Arrange
-        _eventRepositoryMock.Setup(x =>
-                x.Save(It.Is<Event>(cReceived => cReceived.Equals(_expectedEvent))))
-            .Returns(_expectedEvent);
+        var eventService = new EventService(_eventRepositoryMock.Object, _ticketRepositoryMock.Object);
+        var customerService = new CustomerService(_customerRepositoryMock.Object);
+        var partnerRepository = new InMemoryPartnerRepository();
 
-        _partnerRepositoryMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived => idReceived.Equals(_disney.GetId()))))
-            .Returns(_disney);
+        var createEventUseCase = new CreateEventUseCase(partnerRepository, new InMemoryEventRepository());
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
+
+        var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
+
+        var newPartner = new NewPartnerDto("Partner", "02.308.322/0001-28", "partner@test.com");
+
+        var partnerController = new PartnerController(new CreatePartnerUseCase(partnerRepository), new GetPartnerByIdUseCase(partnerRepository));
+
+        var partnerControllerOutput = partnerController.Create(newPartner) as ObjectResult;
+        var partnerControllerOutputValue = partnerControllerOutput?.Value as CreatePartnerUseCase.Output;
+
+        var eventDto = new NewEventDto("Disney on Ice", "2021-01-01", 100,
+            partnerControllerOutputValue?.Id ?? throw new InvalidOperationException());
 
         // Act
-        var result = _controller.Create(_eventDto);
+        var result = controller.Create(eventDto);
         var exeResult = result as ObjectResult;
 
         Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as NewEventDto;
+        var exeResultValue = exeResult.Value as CreateEventUseCase.Output;
 
         // Assert
         Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
 
         Assert.NotNull(exeResultValue);
-        Assert.Equal(DateTime.Parse(exeResultValue.Date!), _expectedEvent.GetDate());
-        Assert.Equal(exeResultValue.TotalSpots, _expectedEvent.GetTotalSpots());
-        Assert.Equal(exeResultValue.Name, _expectedEvent.GetName());
+        Assert.NotNull(exeResultValue.EventId);
+        Assert.False(string.IsNullOrEmpty(exeResultValue.EventId));
+        Assert.Equal(exeResultValue.PartnerId, partnerControllerOutputValue.Id);
     }
 
     [Fact(DisplayName = "Should buy an event ticket")]
     public void TestReserveTicket()
     {
         // Arrange  
+
+        var eventService = new EventService(_eventRepositoryMock.Object, _ticketRepositoryMock.Object);
+        var customerService = new CustomerService(_customerRepositoryMock.Object);
+        var partnerRepository = new InMemoryPartnerRepository();
+        var eventRepository = new InMemoryEventRepository();
+
+        var createEventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
+
+        var newPartner = new NewPartnerDto("Partner", "02.308.322/0001-28", "partner@test.com");
+
+        var partnerController = new PartnerController(new CreatePartnerUseCase(partnerRepository), new GetPartnerByIdUseCase(partnerRepository));
+
+        var partnerControllerOutput = partnerController.Create(newPartner) as ObjectResult;
+        var partnerControllerOutputValue = partnerControllerOutput?.Value as CreatePartnerUseCase.Output;
+
+        var eventDto = new NewEventDto("Disney on Ice", "2021-01-01", 100,
+            partnerControllerOutputValue?.Id ?? throw new InvalidOperationException());
+
+        var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
+        controller.Create(eventDto);
+
         var johnDoe = new Customer(0, "John Doe", "123", "");
         var evnt = new Event(0, "Disney on Ice", DateTime.Now, 100, null);
 
@@ -68,38 +87,16 @@ public class EventControllerTest
                 x.FindById(It.Is<long>(idReceived => idReceived.Equals(0))))
             .Returns(johnDoe);
 
-        _eventRepositoryMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived => idReceived.Equals(_expectedEvent.GetId()))))
-            .Returns(_expectedEvent);
-
         _ticketRepositoryMock
             .Setup(x => x.FindByEventIdAndCustomerId(It.Is<long>(idReceived => idReceived.Equals(0)),
                 It.Is<long>(idReceived => idReceived.Equals(0)))).Returns((Ticket?)null);
 
         // Act
-        var result = _controller.Subscribe(evnt.GetId(), sub);
+        var result = controller.Subscribe(evnt.GetId(), sub);
         var exeResult = result as OkResult;
 
         // Assert
         Assert.NotNull(exeResult);
         Assert.Equal(StatusCodes.Status200OK, exeResult.StatusCode);
-    }
-
-    private EventController ControllerFactory()
-    {
-        var eventService = new EventService(_eventRepositoryMock.Object, _ticketRepositoryMock.Object);
-        var partnerService = new PartnerService(_partnerRepositoryMock.Object);
-        var customerService = new CustomerService(_customerRepositoryMock.Object);
-        var createEventUseCase = new CreateEventUseCase(partnerService, eventService);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
-
-        var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
-        return controller;
-    }
-
-    private static Event TestEventFactory(NewEventDto evnt)
-    {
-        return new Event(0, evnt.Name, DateTime.Parse(evnt.Date!),
-            evnt.TotalSpots, new HashSet<Ticket>());
     }
 }

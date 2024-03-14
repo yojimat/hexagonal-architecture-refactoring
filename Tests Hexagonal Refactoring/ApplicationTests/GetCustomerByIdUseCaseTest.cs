@@ -1,4 +1,6 @@
-﻿namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+﻿using Hexagonal_Refactoring.Application.Domain;
+
+namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
 public class GetCustomerByIdUseCaseTest
 {

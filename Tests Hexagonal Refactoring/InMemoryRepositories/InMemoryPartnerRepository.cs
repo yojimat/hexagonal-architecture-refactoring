@@ -1,4 +1,6 @@
-﻿namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
+﻿using Hexagonal_Refactoring.Application.Domain;
+
+namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
 
 public class InMemoryPartnerRepository : IPartnerRepository
 {

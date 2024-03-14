@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.Entities;
 using Hexagonal_Refactoring.Application.Repositories;
+using Customer = Hexagonal_Refactoring.Application.Domain.Customer;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
@@ -22,5 +22,6 @@ public class CreateCustomerUseCase(ICustomerRepository customerRepository)
     }
 
     public record Input(string Cpf, string Email, string Name);
+
     public record Output(string Id, string Cpf, string Email, string Name);
 }

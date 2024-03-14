@@ -1,28 +1,18 @@
-﻿using Hexagonal_Refactoring.Models;
-using Hexagonal_Refactoring.Repositories;
-using Customer = Hexagonal_Refactoring.Models.Customer;
-using Event = Hexagonal_Refactoring.Models.Event;
-using ICustomerRepository = Hexagonal_Refactoring.Repositories.ICustomerRepository;
-using IEventRepository = Hexagonal_Refactoring.Repositories.IEventRepository;
-
-namespace Tests_Hexagonal_Refactoring.ControllerTests;
+﻿namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class EventControllerTest
 {
-    private readonly Mock<ICustomerRepository> _customerRepositoryMock = new();
-    private readonly Mock<IEventRepository> _eventRepositoryMock = new();
-    private readonly Mock<ITicketRepository> _ticketRepositoryMock = new();
-
     [Fact(DisplayName = "Should create an event")]
     public void TestCreate()
     {
         // Arrange
-        var eventService = new EventService(_eventRepositoryMock.Object, _ticketRepositoryMock.Object);
-        var customerService = new CustomerService(_customerRepositoryMock.Object);
         var partnerRepository = new InMemoryPartnerRepository();
+        var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
         var createEventUseCase = new CreateEventUseCase(partnerRepository, new InMemoryEventRepository());
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
 
@@ -56,14 +46,15 @@ public class EventControllerTest
     public void TestReserveTicket()
     {
         // Arrange  
-
-        var eventService = new EventService(_eventRepositoryMock.Object, _ticketRepositoryMock.Object);
-        var customerService = new CustomerService(_customerRepositoryMock.Object);
         var partnerRepository = new InMemoryPartnerRepository();
         var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
         var createEventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerService, eventService);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+
+        var eventController = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
 
         var newPartner = new NewPartnerDto("Partner", "02.308.322/0001-28", "partner@test.com");
 
@@ -75,24 +66,20 @@ public class EventControllerTest
         var eventDto = new NewEventDto("Disney on Ice", "2021-01-01", 100,
             partnerControllerOutputValue?.Id ?? throw new InvalidOperationException());
 
-        var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
-        controller.Create(eventDto);
+        var eventResult = eventController.Create(eventDto) as ObjectResult;
+        var eventOutput = eventResult?.Value as CreateEventUseCase.Output;
 
-        var johnDoe = new Customer(0, "John Doe", "123", "");
-        var evnt = new Event(0, "Disney on Ice", DateTime.Now, 100, null);
+        var customerController = new CustomerController(new CreateCustomerUseCase(customerRepository), new GetCustomerByIdUseCase(customerRepository));
+        var customerResult =
+            customerController.Create(new NewCustomerDto("customer name", "123.123.123-12", "customer@test.com")) as
+                ObjectResult;
 
-        var sub = new SubscribeDto(johnDoe.GetId());
+        var customerOutput = customerResult?.Value as CreateCustomerUseCase.Output;
 
-        _customerRepositoryMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived => idReceived.Equals(0))))
-            .Returns(johnDoe);
-
-        _ticketRepositoryMock
-            .Setup(x => x.FindByEventIdAndCustomerId(It.Is<long>(idReceived => idReceived.Equals(0)),
-                It.Is<long>(idReceived => idReceived.Equals(0)))).Returns((Ticket?)null);
+        var subDto = new SubscribeDto(customerOutput?.Id ?? throw new ArgumentException());
 
         // Act
-        var result = controller.Subscribe(evnt.GetId(), sub);
+        var result = eventController.Subscribe(eventOutput?.EventId ?? throw new ArgumentException(), subDto);
         var exeResult = result as OkResult;
 
         // Assert

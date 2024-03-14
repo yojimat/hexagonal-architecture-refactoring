@@ -1,3 +1,3 @@
 ﻿namespace Hexagonal_Refactoring.DTOs;
 
-public record SubscribeDto(long CustomerId);
+public record SubscribeDto(string CustomerId);

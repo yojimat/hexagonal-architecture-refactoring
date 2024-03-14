@@ -1,5 +1,5 @@
-﻿using Hexagonal_Refactoring.Application.Entities;
-using EventId = Hexagonal_Refactoring.Application.Entities.EventId;
+﻿using Hexagonal_Refactoring.Application.Domain;
+using EventId = Hexagonal_Refactoring.Application.Domain.EventId;
 
 namespace Hexagonal_Refactoring.Application.Repositories;
 

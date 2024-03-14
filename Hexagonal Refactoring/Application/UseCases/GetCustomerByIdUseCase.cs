@@ -1,4 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Entities;
+﻿using Hexagonal_Refactoring.Application.Domain;
 using Hexagonal_Refactoring.Application.Repositories;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
@@ -16,5 +16,6 @@ public class GetCustomerByIdUseCase(ICustomerRepository customerRepository)
     }
 
     public record Input(string Id);
+
     public record Output(string Id, string Cpf, string Email, string Name);
 }

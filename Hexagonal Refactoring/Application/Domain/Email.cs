@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Hexagonal_Refactoring.Application.Entities;
+namespace Hexagonal_Refactoring.Application.Domain;
 
 public partial record Email
 {

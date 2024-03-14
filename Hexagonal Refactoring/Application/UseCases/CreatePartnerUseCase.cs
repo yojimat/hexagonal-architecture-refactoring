@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.Entities;
 using Hexagonal_Refactoring.Application.Repositories;
+using Partner = Hexagonal_Refactoring.Application.Domain.Partner;
 
 namespace Hexagonal_Refactoring.Application.UseCases;
 
@@ -21,5 +21,6 @@ public class CreatePartnerUseCase(IPartnerRepository partnerRepository)
     }
 
     public record Input(string Cnpj, string Email, string Name);
+
     public record Output(string Id, string Cnpj, string Email, string Name);
 }

@@ -1,4 +1,4 @@
-﻿namespace Hexagonal_Refactoring.Application.Entities;
+﻿namespace Hexagonal_Refactoring.Application.Domain;
 
 // TODO: I'm thinking of implementing an abstract class for Ids.
 public record PartnerId(Guid Id)

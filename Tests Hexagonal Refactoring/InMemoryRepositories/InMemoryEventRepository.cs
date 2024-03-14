@@ -1,4 +1,6 @@
-﻿namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
+﻿using Hexagonal_Refactoring.Application.Domain;
+
+namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
 
 public class InMemoryEventRepository : IEventRepository
 {
@@ -14,7 +16,7 @@ public class InMemoryEventRepository : IEventRepository
 
     public Event Update(Event eEvent)
     {
-        _events.Add(eEvent.EventId.ToString(), eEvent);
+        _events[eEvent.EventId.ToString()] = eEvent;
         return eEvent;
     }
 }

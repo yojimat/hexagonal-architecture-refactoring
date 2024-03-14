@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Hexagonal_Refactoring.Application.Domain;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 

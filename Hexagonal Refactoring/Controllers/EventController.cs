@@ -31,12 +31,12 @@ public class EventController(
         }
     }
 
-    [HttpPost("{id:long}/subscribe")]
-    public IActionResult Subscribe(long id, [FromBody] SubscribeDto dto)
+    [HttpPost("{id}/subscribe")]
+    public IActionResult Subscribe(string id, [FromBody] SubscribeDto dto)
     {
         try
         {
-            subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(id, dto.CustomerId));
+            subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(dto.CustomerId, id));
 
             return Ok();
         }

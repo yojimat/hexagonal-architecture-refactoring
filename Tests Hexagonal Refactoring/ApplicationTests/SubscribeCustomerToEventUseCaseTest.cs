@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Models;
-using Customer = Hexagonal_Refactoring.Models.Customer;
-using Event = Hexagonal_Refactoring.Models.Event;
+using System.Globalization;
 
 namespace Tests_Hexagonal_Refactoring.ApplicationTests;
 
@@ -11,78 +9,61 @@ public class SubscribeCustomerToEventUseCaseTest
     public void TestSubscribeCustomerToEvent()
     {
         // Given
-        const long expectedCustomerId = 1;
-        const long expectedEventId = 1;
+        var partnerRepository = new InMemoryPartnerRepository();
+        var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
-        var mockEvent = new Event(1, "Event 1", DateTime.Now, 10, new HashSet<Ticket>());
-        var mockCustomer = new Customer(1, "John Doe", "123.456.789-00", "");
+        CreatePartnerUseCase.Input partnerInput = new("11.545.127/0001-02", "partner@test.com", "partner name");
+        var partnerUseCase = new CreatePartnerUseCase(partnerRepository);
+        var partnerOutput = partnerUseCase.Execute(partnerInput);
 
-        SubscribeCustomerToEventUseCase.Input subscribeInput = new(expectedCustomerId, expectedEventId);
+        CreateEventUseCase.Input eventInput = new("Event 1",
+            DateTime.Now.ToShortDateString(), 10, partnerOutput.Id);
+        var eventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
+        var eventOutput = eventUseCase.Execute(eventInput);
 
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedCustomerId))))
-            .Returns(mockCustomer);
+        CreateCustomerUseCase.Input customerInput = new("123.123.123-12", "customer@test.com", "customer name");
+        var customerUseCase = new CreateCustomerUseCase(customerRepository);
+        var customerOutput = customerUseCase.Execute(customerInput);
 
-        Mock<IEventService> eventServiceMock = new();
-        eventServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedEventId))))
-            .Returns(mockEvent);
-
-        eventServiceMock.Setup(x =>
-                x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
-                        eventId.Equals(expectedEventId)),
-                    It.Is<long>(customerId =>
-                        customerId.Equals(expectedCustomerId))))
-            .Returns((Ticket?)null);
+        SubscribeCustomerToEventUseCase.Input subscribeInput = new(customerOutput.Id, eventOutput.EventId);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //when
-        SubscribeCustomerToEventUseCase useCase = new(customerServiceMock.Object, eventServiceMock.Object);
-        useCase.Execute(subscribeInput);
+        var subscribeOutput = subscribeCustomerToEventUseCase.Execute(subscribeInput);
 
         //then
-        eventServiceMock.Verify(x => x.Save(It.Is<Event>(e =>
-            e.GetTickets()!.Count == 1)), Times.Once);
+        Assert.False(string.IsNullOrEmpty(subscribeOutput.TicketId));
     }
 
     [Fact(DisplayName = "Shouldn't subscribe a customer to an event if the event is sold out")]
     public void TestWhenEventIsSoldOut()
     {
         // Given
-        const long expectedCustomerId = 1;
-        const long expectedEventId = 1;
+        var partnerRepository = new InMemoryPartnerRepository();
+        var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
-        var mockEvent = new Event(1, "Event 1", DateTime.Now, 0, new HashSet<Ticket>());
-        var mockCustomer = new Customer(1, "John Doe", "123.456.789-00", "");
+        CreatePartnerUseCase.Input partnerInput = new("11.545.127/0001-02", "partner@test.com", "partner name");
+        var partnerUseCase = new CreatePartnerUseCase(partnerRepository);
+        var partnerOutput = partnerUseCase.Execute(partnerInput);
 
-        SubscribeCustomerToEventUseCase.Input subscribeInput = new(expectedCustomerId, expectedEventId);
+        CreateEventUseCase.Input eventInput = new("Event 1",
+            DateTime.Now.ToShortDateString(), 0, partnerOutput.Id);
+        var eventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
+        var eventOutput = eventUseCase.Execute(eventInput);
 
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedCustomerId))))
-            .Returns(mockCustomer);
+        CreateCustomerUseCase.Input customerInput = new("123.123.123-12", "customer@test.com", "customer name");
+        var customerUseCase = new CreateCustomerUseCase(customerRepository);
+        var customerOutput = customerUseCase.Execute(customerInput);
 
-        Mock<IEventService> eventServiceMock = new();
-        eventServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedEventId))))
-            .Returns(mockEvent);
-
-        eventServiceMock.Setup(x =>
-                x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
-                        eventId.Equals(expectedEventId)),
-                    It.Is<long>(customerId =>
-                        customerId.Equals(expectedCustomerId))))
-            .Returns((Ticket?)null);
-
-        //when
-        SubscribeCustomerToEventUseCase useCase = new(customerServiceMock.Object, eventServiceMock.Object);
+        SubscribeCustomerToEventUseCase.Input subscribeInput = new(customerOutput.Id, eventOutput.EventId);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //then
-        var ex = Assert.Throws<ValidationException>(() => useCase.Execute(subscribeInput));
+        var ex = Assert.Throws<InvalidOperationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
         Assert.Equal("Event sold out", ex.Message);
     }
 
@@ -90,38 +71,33 @@ public class SubscribeCustomerToEventUseCaseTest
     public void TestWhenAlreadySubscribed()
     {
         // Given
-        const long expectedCustomerId = 1;
-        const long expectedEventId = 1;
+        var partnerRepository = new InMemoryPartnerRepository();
+        var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
-        var mockEvent = new Event(1, "Event 1", DateTime.Now, 10, new HashSet<Ticket>());
-        var mockCustomer = new Customer(1, "John Doe", "123.456.789-00", "");
+        CreatePartnerUseCase.Input partnerInput = new("11.545.127/0001-02", "partner@test.com", "partner name");
+        var partnerUseCase = new CreatePartnerUseCase(partnerRepository);
+        var partnerOutput = partnerUseCase.Execute(partnerInput);
 
-        SubscribeCustomerToEventUseCase.Input subscribeInput = new(expectedCustomerId, expectedEventId);
+        CreateEventUseCase.Input eventInput = new("Event 1",
+            DateTime.Now.ToShortDateString(), 1, partnerOutput.Id);
+        var eventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
+        var eventOutput = eventUseCase.Execute(eventInput);
 
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedCustomerId))))
-            .Returns(mockCustomer);
+        CreateCustomerUseCase.Input customerInput = new("123.123.123-12", "customer@test.com", "customer name");
+        var customerUseCase = new CreateCustomerUseCase(customerRepository);
+        var customerOutput = customerUseCase.Execute(customerInput);
 
-        Mock<IEventService> eventServiceMock = new();
-        eventServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedEventId))))
-            .Returns(mockEvent);
+        SubscribeCustomerToEventUseCase.Input subscribeInput = new(customerOutput.Id, eventOutput.EventId);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
-        eventServiceMock.Setup(x =>
-                x.FindTicketByEventIdAndCustomerId(It.Is<long>(eventId =>
-                        eventId.Equals(expectedEventId)),
-                    It.Is<long>(customerId =>
-                        customerId.Equals(expectedCustomerId))))
-            .Returns(new Ticket());
-
-        //when
-        SubscribeCustomerToEventUseCase useCase = new(customerServiceMock.Object, eventServiceMock.Object);
+        // When
+        // Buy one ticket
+        subscribeCustomerToEventUseCase.Execute(subscribeInput);
 
         //then
-        var ex = Assert.Throws<ValidationException>(() => useCase.Execute(subscribeInput));
+        var ex = Assert.Throws<InvalidOperationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
         Assert.Equal("Email already registered", ex.Message);
     }
 
@@ -129,30 +105,25 @@ public class SubscribeCustomerToEventUseCaseTest
     public void TestSubscriberNotFound()
     {
         // Given
-        const long expectedCustomerId = 1;
-        const long expectedEventId = 1;
+        var partnerRepository = new InMemoryPartnerRepository();
+        var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
-        var mockEvent = new Event(1, "Event 1", DateTime.Now, 10, new HashSet<Ticket>());
+        CreatePartnerUseCase.Input partnerInput = new("11.545.127/0001-02", "partner@test.com", "partner name");
+        var partnerUseCase = new CreatePartnerUseCase(partnerRepository);
+        var partnerOutput = partnerUseCase.Execute(partnerInput);
 
-        SubscribeCustomerToEventUseCase.Input subscribeInput = new(expectedCustomerId, expectedEventId);
+        CreateEventUseCase.Input eventInput = new("Event 1",
+            DateTime.Now.ToShortDateString(), 0, partnerOutput.Id);
+        var eventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
+        var eventOutput = eventUseCase.Execute(eventInput);
 
-        Mock<ICustomerService> customerServiceMock = new();
-        customerServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedCustomerId))))
-            .Returns((Customer?)null);
-
-        Mock<IEventService> eventServiceMock = new();
-        eventServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedEventId))))
-            .Returns(mockEvent);
-
-        //when
-        SubscribeCustomerToEventUseCase useCase = new(customerServiceMock.Object, eventServiceMock.Object);
+        SubscribeCustomerToEventUseCase.Input subscribeInput = new(Guid.NewGuid().ToString(), eventOutput.EventId);
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //then
-        var ex = Assert.Throws<ValidationException>(() => useCase.Execute(subscribeInput));
+        var ex = Assert.Throws<ValidationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
         Assert.Equal("Customer not found", ex.Message);
     }
 
@@ -160,24 +131,16 @@ public class SubscribeCustomerToEventUseCaseTest
     public void TestEventNotFound()
     {
         // Given
-        const long expectedCustomerId = 1;
-        const long expectedEventId = 1;
+        var eventRepository = new InMemoryEventRepository();
+        var customerRepository = new InMemoryCustomerRepository();
+        var ticketRepository = new InMemoryTicketRepository();
 
-        SubscribeCustomerToEventUseCase.Input subscribeInput = new(expectedCustomerId, expectedEventId);
-
-        Mock<ICustomerService> customerServiceMock = new();
-
-        Mock<IEventService> eventServiceMock = new();
-        eventServiceMock.Setup(x =>
-                x.FindById(It.Is<long>(idReceived =>
-                    idReceived.Equals(expectedEventId))))
-            .Returns((Event?)null);
-
-        //when
-        SubscribeCustomerToEventUseCase useCase = new(customerServiceMock.Object, eventServiceMock.Object);
+        SubscribeCustomerToEventUseCase.Input
+            subscribeInput = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //then
-        var ex = Assert.Throws<ValidationException>(() => useCase.Execute(subscribeInput));
+        var ex = Assert.Throws<ValidationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
         Assert.Equal("Event not found", ex.Message);
     }
 }

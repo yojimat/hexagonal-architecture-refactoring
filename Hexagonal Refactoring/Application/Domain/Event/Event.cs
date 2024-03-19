@@ -1,4 +1,7 @@
-﻿namespace Hexagonal_Refactoring.Application.Domain;
+﻿using Hexagonal_Refactoring.Application.Domain.Customer;
+using Hexagonal_Refactoring.Application.Domain.Partner;
+
+namespace Hexagonal_Refactoring.Application.Domain.Event;
 
 public class Event
 {
@@ -23,7 +26,7 @@ public class Event
     public static Event NewEvent(string name, string date, int totalSpots, PartnerId partnerId) =>
         new(EventId.NewId(), name, date, totalSpots, partnerId);
 
-    public Ticket ReserveTicket(CustomerId customerId)
+    public Ticket.Ticket ReserveTicket(CustomerId customerId)
     {
         var foundTicket = Tickets.SingleOrDefault(t => t.CustomerId == customerId);
         if (foundTicket is not null) throw new InvalidOperationException("Email already registered");
@@ -31,7 +34,7 @@ public class Event
         if (TotalSpots < Tickets.Count + One)
             throw new InvalidOperationException("Event sold out");
 
-        var newTicket = Ticket.NewTicket(customerId, EventId);
+        var newTicket = Ticket.Ticket.NewTicket(customerId, EventId);
 
         Tickets.Add(new EventTicket(newTicket.TicketId, EventId, customerId, Tickets.Count + 1));
 

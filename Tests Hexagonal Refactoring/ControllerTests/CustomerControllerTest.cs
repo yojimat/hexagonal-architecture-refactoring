@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using Hexagonal_Refactoring.Application.UseCases.Customer;
 using Customer = Hexagonal_Refactoring.Models.Customer;
 
 namespace Tests_Hexagonal_Refactoring.ControllerTests;

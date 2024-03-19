@@ -1,6 +1,7 @@
-﻿using Hexagonal_Refactoring.Models;
+﻿using Hexagonal_Refactoring.Application.Domain.Customer;
+using Hexagonal_Refactoring.Models;
 
-namespace Hexagonal_Refactoring.Application.Domain;
+namespace Hexagonal_Refactoring.Application.Domain.Event.Ticket;
 
 public class Ticket
 {

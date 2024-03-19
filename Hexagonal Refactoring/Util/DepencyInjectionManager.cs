@@ -1,4 +1,6 @@
-﻿using Hexagonal_Refactoring.Application.UseCases;
+﻿using Hexagonal_Refactoring.Application.UseCases.Customer;
+using Hexagonal_Refactoring.Application.UseCases.Event;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
 using Hexagonal_Refactoring.Repositories;
 using Hexagonal_Refactoring.Services;
 

@@ -1,4 +1,7 @@
-﻿namespace Hexagonal_Refactoring.Application.Domain;
+﻿using Hexagonal_Refactoring.Application.Domain.Customer;
+using Hexagonal_Refactoring.Application.Domain.Event.Ticket;
+
+namespace Hexagonal_Refactoring.Application.Domain.Event;
 
 public class EventTicket(TicketId ticketId, EventId eventId, CustomerId customerId, int ordering)
 {

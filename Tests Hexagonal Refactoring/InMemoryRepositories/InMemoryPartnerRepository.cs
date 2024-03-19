@@ -1,4 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
+﻿using Hexagonal_Refactoring.Application.Domain.Partner;
 
 namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
 

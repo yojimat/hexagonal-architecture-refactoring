@@ -1,4 +1,5 @@
-﻿
+﻿using Hexagonal_Refactoring.Application.UseCases.Partner;
+
 namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class PartnerControllerTest
@@ -19,7 +20,7 @@ public class PartnerControllerTest
         // Assert
         Assert.NotNull(exeResultValue);
         Assert.Equal(StatusCodes.Status201Created, exeResult.StatusCode);
-        Assert.Equal(_partnerDto.Email,exeResultValue.Email );
+        Assert.Equal(_partnerDto.Email, exeResultValue.Email);
         Assert.Equal(_partnerDto.Cnpj, exeResultValue.Cnpj);
         Assert.Equal(_partnerDto.Name, exeResultValue.Name);
     }

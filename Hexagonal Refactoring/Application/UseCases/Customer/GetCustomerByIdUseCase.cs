@@ -1,7 +1,7 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
+﻿using Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.Repositories;
 
-namespace Hexagonal_Refactoring.Application.UseCases;
+namespace Hexagonal_Refactoring.Application.UseCases.Customer;
 
 public class GetCustomerByIdUseCase(ICustomerRepository customerRepository)
     : UseCase<GetCustomerByIdUseCase.Input, GetCustomerByIdUseCase.Output>

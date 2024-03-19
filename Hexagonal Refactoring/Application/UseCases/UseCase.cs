@@ -1,4 +1,4 @@
-﻿namespace Hexagonal_Refactoring.Application;
+﻿namespace Hexagonal_Refactoring.Application.UseCases;
 
 public abstract class UseCase<TInput, TOutput>
 {

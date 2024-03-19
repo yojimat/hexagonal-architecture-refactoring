@@ -1,6 +1,7 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
+﻿using DomainCustomer = Hexagonal_Refactoring.Application.Domain.Customer;
+using Hexagonal_Refactoring.Application.UseCases.Customer;
 
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+namespace Tests_Hexagonal_Refactoring.ApplicationTests.Customer;
 
 public class GetCustomerByIdUseCaseTest
 {
@@ -12,7 +13,7 @@ public class GetCustomerByIdUseCaseTest
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
 
-        var customer = Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
+        var customer = DomainCustomer.Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
 
         var customerRepository = new InMemoryCustomerRepository();
         customerRepository.Create(customer);

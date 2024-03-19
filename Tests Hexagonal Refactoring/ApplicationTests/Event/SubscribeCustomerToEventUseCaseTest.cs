@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+using Hexagonal_Refactoring.Application.UseCases.Customer;
+using Hexagonal_Refactoring.Application.UseCases.Event;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
 
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+namespace Tests_Hexagonal_Refactoring.ApplicationTests.Event;
 
 public class SubscribeCustomerToEventUseCaseTest
 {
@@ -28,7 +30,8 @@ public class SubscribeCustomerToEventUseCaseTest
         var customerOutput = customerUseCase.Execute(customerInput);
 
         SubscribeCustomerToEventUseCase.Input subscribeInput = new(customerOutput.Id, eventOutput.EventId);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //when
         var subscribeOutput = subscribeCustomerToEventUseCase.Execute(subscribeInput);
@@ -60,10 +63,12 @@ public class SubscribeCustomerToEventUseCaseTest
         var customerOutput = customerUseCase.Execute(customerInput);
 
         SubscribeCustomerToEventUseCase.Input subscribeInput = new(customerOutput.Id, eventOutput.EventId);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //then
-        var ex = Assert.Throws<InvalidOperationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            subscribeCustomerToEventUseCase.Execute(subscribeInput));
         Assert.Equal("Event sold out", ex.Message);
     }
 
@@ -90,14 +95,16 @@ public class SubscribeCustomerToEventUseCaseTest
         var customerOutput = customerUseCase.Execute(customerInput);
 
         SubscribeCustomerToEventUseCase.Input subscribeInput = new(customerOutput.Id, eventOutput.EventId);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         // When
         // Buy one ticket
         subscribeCustomerToEventUseCase.Execute(subscribeInput);
 
         //then
-        var ex = Assert.Throws<InvalidOperationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            subscribeCustomerToEventUseCase.Execute(subscribeInput));
         Assert.Equal("Email already registered", ex.Message);
     }
 
@@ -120,7 +127,8 @@ public class SubscribeCustomerToEventUseCaseTest
         var eventOutput = eventUseCase.Execute(eventInput);
 
         SubscribeCustomerToEventUseCase.Input subscribeInput = new(Guid.NewGuid().ToString(), eventOutput.EventId);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //then
         var ex = Assert.Throws<ValidationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));
@@ -137,7 +145,8 @@ public class SubscribeCustomerToEventUseCaseTest
 
         SubscribeCustomerToEventUseCase.Input
             subscribeInput = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         //then
         var ex = Assert.Throws<ValidationException>(() => subscribeCustomerToEventUseCase.Execute(subscribeInput));

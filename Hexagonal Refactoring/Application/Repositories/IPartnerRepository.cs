@@ -1,5 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
-using Partner = Hexagonal_Refactoring.Application.Domain.Partner;
+﻿using Hexagonal_Refactoring.Application.Domain.Partner;
 
 namespace Hexagonal_Refactoring.Application.Repositories;
 

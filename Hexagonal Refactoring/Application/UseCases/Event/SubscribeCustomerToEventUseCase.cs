@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.Domain;
+using Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.Repositories;
-using EventId = Hexagonal_Refactoring.Application.Domain.EventId;
+using EventId = Hexagonal_Refactoring.Application.Domain.Event.EventId;
 
-namespace Hexagonal_Refactoring.Application.UseCases;
+namespace Hexagonal_Refactoring.Application.UseCases.Event;
 
 public class SubscribeCustomerToEventUseCase(
     ICustomerRepository customerRepository,

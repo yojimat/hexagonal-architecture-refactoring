@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.Domain;
+using DomainPartner = Hexagonal_Refactoring.Application.Domain.Partner;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
 
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+namespace Tests_Hexagonal_Refactoring.ApplicationTests.Partner;
 
 public class CreatePartnerUseCaseTest
 {
@@ -37,7 +38,7 @@ public class CreatePartnerUseCaseTest
         const string expectedEmail = "test@test.com";
         const string expectedExceptionMessage = "Partner CNPJ already in use";
 
-        var newPartner = Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
+        var newPartner = DomainPartner.Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
 
         var partnerRepository = new InMemoryPartnerRepository();
         partnerRepository.Create(newPartner);
@@ -62,7 +63,7 @@ public class CreatePartnerUseCaseTest
         const string expectedEmail = "test@test.com";
         const string expectedExceptionMessage = "Partner Email already in use";
 
-        var customer = Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
+        var customer = DomainPartner.Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
 
         var customerRepository = new InMemoryPartnerRepository();
         customerRepository.Create(customer);

@@ -1,4 +1,8 @@
-﻿namespace Tests_Hexagonal_Refactoring.ControllerTests;
+﻿using Hexagonal_Refactoring.Application.UseCases.Customer;
+using Hexagonal_Refactoring.Application.UseCases.Event;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
+
+namespace Tests_Hexagonal_Refactoring.ControllerTests;
 
 public class EventControllerTest
 {
@@ -12,13 +16,15 @@ public class EventControllerTest
         var ticketRepository = new InMemoryTicketRepository();
 
         var createEventUseCase = new CreateEventUseCase(partnerRepository, new InMemoryEventRepository());
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         var controller = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
 
         var newPartner = new NewPartnerDto("Partner", "02.308.322/0001-28", "partner@test.com");
 
-        var partnerController = new PartnerController(new CreatePartnerUseCase(partnerRepository), new GetPartnerByIdUseCase(partnerRepository));
+        var partnerController = new PartnerController(new CreatePartnerUseCase(partnerRepository),
+            new GetPartnerByIdUseCase(partnerRepository));
 
         var partnerControllerOutput = partnerController.Create(newPartner) as ObjectResult;
         var partnerControllerOutputValue = partnerControllerOutput?.Value as CreatePartnerUseCase.Output;
@@ -52,13 +58,15 @@ public class EventControllerTest
         var ticketRepository = new InMemoryTicketRepository();
 
         var createEventUseCase = new CreateEventUseCase(partnerRepository, eventRepository);
-        var subscribeCustomerToEventUseCase = new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
+        var subscribeCustomerToEventUseCase =
+            new SubscribeCustomerToEventUseCase(customerRepository, eventRepository, ticketRepository);
 
         var eventController = new EventController(createEventUseCase, subscribeCustomerToEventUseCase);
 
         var newPartner = new NewPartnerDto("Partner", "02.308.322/0001-28", "partner@test.com");
 
-        var partnerController = new PartnerController(new CreatePartnerUseCase(partnerRepository), new GetPartnerByIdUseCase(partnerRepository));
+        var partnerController = new PartnerController(new CreatePartnerUseCase(partnerRepository),
+            new GetPartnerByIdUseCase(partnerRepository));
 
         var partnerControllerOutput = partnerController.Create(newPartner) as ObjectResult;
         var partnerControllerOutputValue = partnerControllerOutput?.Value as CreatePartnerUseCase.Output;
@@ -69,7 +77,8 @@ public class EventControllerTest
         var eventResult = eventController.Create(eventDto) as ObjectResult;
         var eventOutput = eventResult?.Value as CreateEventUseCase.Output;
 
-        var customerController = new CustomerController(new CreateCustomerUseCase(customerRepository), new GetCustomerByIdUseCase(customerRepository));
+        var customerController = new CustomerController(new CreateCustomerUseCase(customerRepository),
+            new GetCustomerByIdUseCase(customerRepository));
         var customerResult =
             customerController.Create(new NewCustomerDto("customer name", "123.123.123-12", "customer@test.com")) as
                 ObjectResult;

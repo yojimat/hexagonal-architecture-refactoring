@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.Domain;
+using DomainCustomer = Hexagonal_Refactoring.Application.Domain.Customer;
+using Hexagonal_Refactoring.Application.UseCases.Customer;
 
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+namespace Tests_Hexagonal_Refactoring.ApplicationTests.Customer;
 
 public class CreateCustomerUseCaseTest
 {
@@ -37,7 +38,7 @@ public class CreateCustomerUseCaseTest
         const string expectedEmail = "test@test.com";
         const string expectedExceptionMessage = "Customer CPF already in use";
 
-        var customer = Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
+        var customer = DomainCustomer.Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
 
         var customerRepository = new InMemoryCustomerRepository();
         customerRepository.Create(customer);
@@ -62,7 +63,7 @@ public class CreateCustomerUseCaseTest
         const string expectedEmail = "test@test.com";
         const string expectedExceptionMessage = "Customer Email already in use";
 
-        var customer = Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
+        var customer = DomainCustomer.Customer.NewCustomer(expectedName, expectedCpf, expectedEmail);
 
         var customerRepository = new InMemoryCustomerRepository();
         customerRepository.Create(customer);

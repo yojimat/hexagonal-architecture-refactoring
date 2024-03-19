@@ -1,4 +1,7 @@
-﻿namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+﻿using Hexagonal_Refactoring.Application.UseCases.Event;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
+
+namespace Tests_Hexagonal_Refactoring.ApplicationTests.Event;
 
 public class CreateEventUseCaseTest
 {
@@ -41,7 +44,8 @@ public class CreateEventUseCaseTest
         const int expectedTotalSpots = 100;
         var expectedDate = DateTime.Now.ToShortDateString();
 
-        CreateEventUseCase.Input eventInput = new(expectedName, expectedDate, expectedTotalSpots, Guid.NewGuid().ToString());
+        CreateEventUseCase.Input eventInput = new(expectedName, expectedDate, expectedTotalSpots,
+            Guid.NewGuid().ToString());
 
         var eventRepository = new InMemoryEventRepository();
         var partnerRepository = new InMemoryPartnerRepository();

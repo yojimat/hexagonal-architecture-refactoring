@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CustomerDomain = Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.Repositories;
-using Customer = Hexagonal_Refactoring.Application.Domain.Customer;
 
-namespace Hexagonal_Refactoring.Application.UseCases;
+namespace Hexagonal_Refactoring.Application.UseCases.Customer;
 
 public class CreateCustomerUseCase(ICustomerRepository customerRepository)
     : UseCase<CreateCustomerUseCase.Input, CreateCustomerUseCase.Output>
@@ -15,7 +15,7 @@ public class CreateCustomerUseCase(ICustomerRepository customerRepository)
         if (customerRepository.CustomerOfEmail(input.Email) != null)
             throw new ValidationException("Customer Email already in use");
 
-        var customer = customerRepository.Create(Customer.NewCustomer(input.Name, input.Cpf, input.Email));
+        var customer = customerRepository.Create(CustomerDomain.Customer.NewCustomer(input.Name, input.Cpf, input.Email));
 
         return new Output(customer.CustomerId.ToString(), customer.Cpf, customer.Email.Value,
             customer.Name);

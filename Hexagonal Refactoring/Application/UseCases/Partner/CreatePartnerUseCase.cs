@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DomainPartner = Hexagonal_Refactoring.Application.Domain.Partner;
 using Hexagonal_Refactoring.Application.Repositories;
-using Partner = Hexagonal_Refactoring.Application.Domain.Partner;
 
-namespace Hexagonal_Refactoring.Application.UseCases;
+namespace Hexagonal_Refactoring.Application.UseCases.Partner;
 
 public class CreatePartnerUseCase(IPartnerRepository partnerRepository)
     : UseCase<CreatePartnerUseCase.Input, CreatePartnerUseCase.Output>
@@ -15,7 +15,7 @@ public class CreatePartnerUseCase(IPartnerRepository partnerRepository)
         if (partnerRepository.PartnerOfEmail(input.Email) != null)
             throw new ValidationException("Partner Email already in use");
 
-        var partner = partnerRepository.Create(Partner.NewPartner(input.Name, input.Cnpj, input.Email));
+        var partner = partnerRepository.Create(DomainPartner.Partner.NewPartner(input.Name, input.Cnpj, input.Email));
 
         return new Output(partner.PartnerId.ToString(), partner.Cnpj, partner.Email.Value, partner.Name);
     }

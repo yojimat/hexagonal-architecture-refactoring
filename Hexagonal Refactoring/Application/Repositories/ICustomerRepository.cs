@@ -1,5 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
-using Customer = Hexagonal_Refactoring.Application.Domain.Customer;
+﻿using Hexagonal_Refactoring.Application.Domain.Customer;
 
 namespace Hexagonal_Refactoring.Application.Repositories;
 

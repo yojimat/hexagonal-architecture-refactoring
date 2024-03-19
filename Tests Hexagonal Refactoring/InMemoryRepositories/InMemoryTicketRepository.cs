@@ -1,4 +1,5 @@
-﻿
+﻿using Hexagonal_Refactoring.Application.Domain.Event.Ticket;
+
 namespace Tests_Hexagonal_Refactoring.InMemoryRepositories;
 
 public class InMemoryTicketRepository : ITicketRepository

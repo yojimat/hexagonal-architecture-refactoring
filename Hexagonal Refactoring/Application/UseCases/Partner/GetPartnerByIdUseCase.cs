@@ -1,7 +1,7 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
+﻿using Hexagonal_Refactoring.Application.Domain.Partner;
 using Hexagonal_Refactoring.Application.Repositories;
 
-namespace Hexagonal_Refactoring.Application.UseCases;
+namespace Hexagonal_Refactoring.Application.UseCases.Partner;
 
 public class GetPartnerByIdUseCase(IPartnerRepository partnerRepository)
     : UseCase<GetPartnerByIdUseCase.Input, GetPartnerByIdUseCase.Output>

@@ -1,4 +1,4 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
+﻿using Hexagonal_Refactoring.Application.Domain.Event.Ticket;
 
 namespace Hexagonal_Refactoring.Application.Repositories;
 

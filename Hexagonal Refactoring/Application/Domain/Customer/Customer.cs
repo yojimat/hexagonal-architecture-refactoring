@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Hexagonal_Refactoring.Application.Domain;
+namespace Hexagonal_Refactoring.Application.Domain.Customer;
 
 public partial class Customer
 {

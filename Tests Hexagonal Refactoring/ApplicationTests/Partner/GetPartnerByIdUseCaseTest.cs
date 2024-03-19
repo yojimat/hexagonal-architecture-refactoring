@@ -1,6 +1,7 @@
-﻿using Hexagonal_Refactoring.Application.Domain;
+﻿using DomainPartner = Hexagonal_Refactoring.Application.Domain.Partner;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
 
-namespace Tests_Hexagonal_Refactoring.ApplicationTests;
+namespace Tests_Hexagonal_Refactoring.ApplicationTests.Partner;
 
 public class GetPartnerByIdUseCaseTest
 {
@@ -12,7 +13,7 @@ public class GetPartnerByIdUseCaseTest
         const string expectedName = "John Doe";
         const string expectedEmail = "test@test.com";
 
-        var partner = Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
+        var partner = DomainPartner.Partner.NewPartner(expectedName, expectedCnpj, expectedEmail);
 
         var customerRepository = new InMemoryPartnerRepository();
         customerRepository.Create(partner);

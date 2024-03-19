@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Hexagonal_Refactoring.Application.UseCases;
+using Hexagonal_Refactoring.Application.UseCases.Partner;
 using Hexagonal_Refactoring.DTOs;
 using Microsoft.AspNetCore.Mvc;
 

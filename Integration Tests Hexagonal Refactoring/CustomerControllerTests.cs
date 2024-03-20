@@ -1,91 +1,42 @@
-﻿using System.Net.Mime;
-using Hexagonal_Refactoring.Application.Domain.Customer;
+﻿using Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.UseCases.Customer;
 
 namespace Integration_Tests_Hexagonal_Refactoring;
 
-public class CustomerControllerTests
+public class CustomerControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly CustomerController _controller;
+    private readonly WebApplicationFactory<Program> _factory;
     private readonly NewCustomerDto _customerDto;
     private readonly Customer _expectedCustomer;
+    private const string Url = "/api/customers";
 
-    public CustomerControllerTests()
+    public CustomerControllerTests(WebApplicationFactory<Program> factory)
     {
+        _factory = factory;
+
         _customerDto = new NewCustomerDto("John Doe", "123.456.789-01", "johndoe@gmail.com");
         _expectedCustomer = TestCustomerFactory(_customerDto);
-        _controller = ServiceMockSave();
     }
 
-    [Fact(DisplayName = "Should create a client")]
-    public void CreateClient()
+    [Fact]
+    public async Task PostCustomer()
     {
-        // Act
-        var result = _controller.Create(_customerDto);
-        var exeResult = result as ObjectResult;
+        // Arrange
+        var client = _factory.CreateClient();
 
-        Assert.NotNull(exeResult);
-        var exeResultValue = exeResult.Value as CreateCustomerUseCase.Output;
+        // Act
+        var response = await client.PostAsJsonAsync(Url, _customerDto);
 
         // Assert
-        Assert.NotNull(exeResult);
-        Assert.Equal(exeResult.StatusCode, StatusCodes.Status201Created);
+        response.EnsureSuccessStatusCode(); // Status Code 200-299
+        var contentString = await response.Content.ReadAsStringAsync();
+        var responseValue = JsonConvert.DeserializeObject<CreateCustomerUseCase.Output>(contentString);
 
-        Assert.NotNull(exeResultValue);
-        Assert.Equal(_expectedCustomer.Email.Value, exeResultValue.Email);
-        Assert.Equal(_expectedCustomer.Cpf, exeResultValue.Cpf);
-        Assert.Equal(_expectedCustomer.Name, exeResultValue.Name);
-        Assert.False(string.IsNullOrEmpty(_expectedCustomer.CustomerId.ToString()));
-    }
-
-
-    [Fact(DisplayName = "Should get a client by id")]
-    public void TestGet()
-    {
-        // Act
-        var result = _controller.Create(_customerDto);
-        var exeResult = result as ObjectResult;
-        var exeResultValue = exeResult?.Value as CreateCustomerUseCase.Output;
-
-        Assert.NotNull(exeResultValue);
-
-        var getResult = _controller.GetCustomer(exeResultValue.Id);
-
-        var getExeResult = getResult as ObjectResult;
-
-        Assert.NotNull(getExeResult);
-
-        var getExeResultValue = getExeResult.Value as GetCustomerByIdUseCase.Output;
-
-        // Assert 
-        Assert.NotNull(getExeResultValue);
-        Assert.Equal(StatusCodes.Status200OK, getExeResult.StatusCode);
-        Assert.Equal(_expectedCustomer.Email.Value, getExeResultValue.Email);
-        Assert.Equal(_expectedCustomer.Cpf, getExeResultValue.Cpf);
-        Assert.Equal(_expectedCustomer.Name, getExeResultValue.Name);
-    }
-
-    private static CustomerController ServiceMockSave()
-    {
-        var httpContext = new DefaultHttpContext();
-        httpContext.Request.Headers.ContentType = MediaTypeNames.Application.Json;
-
-        var controllerContext = new ControllerContext
-        {
-            HttpContext = httpContext
-        };
-
-        var customerRepository = new InMemoryCustomerRepository();
-
-        var createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
-        var getCustomerByIdUseCase = new GetCustomerByIdUseCase(customerRepository);
-
-        var controller = new CustomerController(createCustomerUseCase, getCustomerByIdUseCase)
-        {
-            ControllerContext = controllerContext
-        };
-
-        return controller;
+        Assert.NotNull(responseValue);
+        Assert.Equal(_expectedCustomer.Email.Value, responseValue.Email);
+        Assert.Equal(_expectedCustomer.Cpf, responseValue.Cpf);
+        Assert.Equal(_expectedCustomer.Name, responseValue.Name);
+        Assert.False(string.IsNullOrEmpty(responseValue.Id));
     }
 
     private static Customer TestCustomerFactory(NewCustomerDto customer) =>

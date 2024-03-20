@@ -1,4 +1,4 @@
-﻿namespace Hexagonal_Refactoring.Models;
+﻿namespace Hexagonal_Refactoring.Application.Domain.Event;
 
 public enum TicketStatus
 {

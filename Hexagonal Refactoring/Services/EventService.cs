@@ -11,12 +11,12 @@ public class EventService(IEventRepository eventRepository, ITicketRepository ti
         return eventRepository.Save(ev);
     }
 
-    public Event? FindById(long id)
+    public Event? FindById(string id)
     {
         return eventRepository.FindById(id);
     }
 
-    public Ticket? FindTicketByEventIdAndCustomerId(long id, long customerId)
+    public Ticket? FindTicketByEventIdAndCustomerId(string id, string customerId)
     {
         return ticketRepository.FindByEventIdAndCustomerId(id, customerId);
     }

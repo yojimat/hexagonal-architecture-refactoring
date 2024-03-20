@@ -4,4 +4,5 @@ The inital project was based on an MBA Java project in this [link](https://githu
 Change to the git branch `refactoring` to see each step of the refactoring process.
 
 # TODO
-	- Remove ValidationException from domain
+- Remove ValidationException from domain
+- Refactor Controller Unit tests using this [tutorial](https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/testing?view=aspnetcore-8.0).

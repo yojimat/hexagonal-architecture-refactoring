@@ -8,7 +8,7 @@ namespace Hexagonal_Refactoring.Models.DbModels;
 public class DbCustomer : Customer
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id
+    public string Id
     {
         get => GetId();
         init => SetId(value);

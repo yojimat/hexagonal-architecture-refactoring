@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Hexagonal_Refactoring.Application.Domain.Event;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hexagonal_Refactoring.Models.DbModels;
@@ -8,14 +9,14 @@ namespace Hexagonal_Refactoring.Models.DbModels;
 public class DbTicket : Ticket
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id
+    public string Id
     {
         get => GetId();
         init => SetId(value);
     }
 
-    public long CustomerId { get; init; }
-    public long EventId { get; init; }
+    public string CustomerId { get; init; }
+    public string EventId { get; init; }
 
     public TicketStatus Status
     {

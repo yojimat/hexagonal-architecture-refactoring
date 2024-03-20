@@ -4,10 +4,10 @@ public class Customer()
 {
     private string? _cpf;
     private string? _email;
-    private long _id;
+    private string _id;
     private string? _name;
 
-    public Customer(long id, string? name, string? cpf, string? email) : this()
+    public Customer(string id, string? name, string? cpf, string? email) : this()
     {
         _id = id;
         _name = name;
@@ -15,12 +15,12 @@ public class Customer()
         _email = email;
     }
 
-    public long GetId()
+    public string GetId()
     {
         return _id;
     }
 
-    public void SetId(long id)
+    public void SetId(string id)
     {
         _id = id;
     }

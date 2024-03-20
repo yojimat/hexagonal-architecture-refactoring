@@ -11,7 +11,7 @@ public class TicketRepository(EventContext eventContext) : ITicketRepository
         throw new NotImplementedException();
     }
 
-    public Ticket? FindById(long id)
+    public Ticket? FindById(string id)
     {
         return eventContext.Tickets.Find(id);
     }
@@ -29,7 +29,7 @@ public class TicketRepository(EventContext eventContext) : ITicketRepository
         throw new NotImplementedException();
     }
 
-    public Ticket? FindByEventIdAndCustomerId(long eventId, long customerId)
+    public Ticket? FindByEventIdAndCustomerId(string eventId, string customerId)
     {
         return eventContext.Tickets.FirstOrDefault(p =>
             p.EventId == eventId && p.CustomerId == customerId);

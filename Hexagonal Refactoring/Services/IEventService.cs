@@ -5,6 +5,6 @@ namespace Hexagonal_Refactoring.Services;
 public interface IEventService
 {
     public Event Save(Event ev);
-    public Event? FindById(long id);
-    public Ticket? FindTicketByEventIdAndCustomerId(long id, long customerId);
+    public Event? FindById(string id);
+    public Ticket? FindTicketByEventIdAndCustomerId(string id, string customerId);
 }

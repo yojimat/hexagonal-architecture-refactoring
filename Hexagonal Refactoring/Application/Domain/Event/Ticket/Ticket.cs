@@ -1,5 +1,4 @@
 ﻿using Hexagonal_Refactoring.Application.Domain.Customer;
-using Hexagonal_Refactoring.Models;
 
 namespace Hexagonal_Refactoring.Application.Domain.Event.Ticket;
 

@@ -2,7 +2,7 @@
 
 namespace Hexagonal_Refactoring.Repositories;
 
-public interface ITicketRepository : ICrudRepository<Ticket, long>
+public interface ITicketRepository : ICrudRepository<Ticket, string>
 {
-    Ticket? FindByEventIdAndCustomerId(long eventId, long customerId);
+    Ticket? FindByEventIdAndCustomerId(string eventId, string customerId);
 }

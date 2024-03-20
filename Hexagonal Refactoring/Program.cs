@@ -47,3 +47,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { } // This for the integration tests to use.

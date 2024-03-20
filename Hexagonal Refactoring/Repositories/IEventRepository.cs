@@ -2,4 +2,4 @@
 
 namespace Hexagonal_Refactoring.Repositories;
 
-public interface IEventRepository : ICrudRepository<Event, long>;
+public interface IEventRepository : ICrudRepository<Event, string>;

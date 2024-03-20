@@ -1,15 +1,17 @@
-﻿namespace Hexagonal_Refactoring.Models;
+﻿using Hexagonal_Refactoring.Application.Domain.Event;
+
+namespace Hexagonal_Refactoring.Models;
 
 public class Ticket()
 {
     private Customer? _customer;
     private Event? _ev;
-    private long _id;
+    private string _id;
     private DateTime _paidAt;
     private DateTime _reservedAt;
     private TicketStatus _status;
 
-    public Ticket(long id, Customer customer, Event ev, TicketStatus status, DateTime paidAt,
+    public Ticket(string id, Customer customer, Event ev, TicketStatus status, DateTime paidAt,
         DateTime reservedAt) : this()
     {
         _id = id;
@@ -20,12 +22,12 @@ public class Ticket()
         _reservedAt = reservedAt;
     }
 
-    public long GetId()
+    public string GetId()
     {
         return _id;
     }
 
-    public void SetId(long id)
+    public void SetId(string id)
     {
         _id = id;
     }

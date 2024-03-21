@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Hexagonal_Refactoring.Infrastructure.Contexts;
 using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Models.DbModels;
-using Hexagonal_Refactoring.Repositories.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hexagonal_Refactoring.Repositories;

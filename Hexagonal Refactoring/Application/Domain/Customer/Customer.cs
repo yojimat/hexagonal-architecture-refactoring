@@ -24,6 +24,10 @@ public partial class Customer
     public static Customer NewCustomer(string name, string cpf, string email) =>
         new(CustomerId.NewId(), name, cpf, new Email(email));
 
+    public static Customer Restore(CustomerId customerId, string name, string cpf, string email) =>
+        new(customerId, name, cpf, new Email(email));
+
     [GeneratedRegex(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$")]
     private static partial Regex CpfValidation();
+
 }

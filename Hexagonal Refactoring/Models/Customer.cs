@@ -4,10 +4,10 @@ public class Customer()
 {
     private string? _cpf;
     private string? _email;
-    private string _id;
+    private Guid _id;
     private string? _name;
 
-    public Customer(string id, string? name, string? cpf, string? email) : this()
+    public Customer(Guid id, string? name, string? cpf, string? email) : this()
     {
         _id = id;
         _name = name;
@@ -15,12 +15,12 @@ public class Customer()
         _email = email;
     }
 
-    public string GetId()
+    public Guid GetId()
     {
         return _id;
     }
 
-    public void SetId(string id)
+    public void SetId(Guid id)
     {
         _id = id;
     }

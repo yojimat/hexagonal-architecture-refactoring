@@ -8,7 +8,7 @@ public class InMemoryCustomerRepository : ICustomerRepository
     private readonly Dictionary<string, Customer> _customersByCpf = [];
     private readonly Dictionary<string, Customer> _customersByEmail = [];
 
-    public Customer? CustomerOfId(CustomerId id) => _customers.GetValueOrDefault(id.Id.ToString());
+    public Customer? CustomerOfId(CustomerId id) => _customers.GetValueOrDefault(id.ToString());
     public Customer? CustomerOfCpf(string cpf) => _customersByCpf.GetValueOrDefault(cpf);
     public Customer? CustomerOfEmail(string email) => _customersByEmail.GetValueOrDefault(email);
 

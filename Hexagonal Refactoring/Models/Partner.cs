@@ -4,10 +4,10 @@ public class Partner()
 {
     private string? _cnpj;
     private string? _email;
-    private string _id;
+    private Guid _id;
     private string? _name;
 
-    public Partner(string id, string? name, string? cnpj, string? email) : this()
+    public Partner(Guid id, string? name, string? cnpj, string? email) : this()
     {
         _id = id;
         _name = name;
@@ -15,12 +15,12 @@ public class Partner()
         _email = email;
     }
 
-    public string GetId()
+    public Guid GetId()
     {
         return _id;
     }
 
-    public void SetId(string id)
+    public void SetId(Guid id)
     {
         _id = id;
     }

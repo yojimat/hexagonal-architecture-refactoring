@@ -8,8 +8,6 @@ public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
-        CreateMap<Customer, DbCustomer>();
-        CreateMap<Event, DbEvent>();
         CreateMap<Partner, DbPartner>();
         CreateMap<Ticket, DbTicket>();
     }

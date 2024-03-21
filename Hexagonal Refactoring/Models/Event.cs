@@ -3,13 +3,13 @@
 public class Event()
 {
     private DateTime _date;
-    private string _id;
+    private Guid _id;
     private string? _name;
     private Partner _partner = new();
     private ISet<Ticket>? _tickets = new HashSet<Ticket>();
     private int _totalSpots;
 
-    public Event(string id, string? name, DateTime date, int totalSpots, ISet<Ticket>? tickets) : this()
+    public Event(Guid id, string? name, DateTime date, int totalSpots, ISet<Ticket>? tickets) : this()
     {
         _id = id;
         _name = name;
@@ -18,12 +18,12 @@ public class Event()
         _tickets = tickets;
     }
 
-    public string GetId()
+    public Guid GetId()
     {
         return _id;
     }
 
-    public void SetId(string id)
+    public void SetId(Guid id)
     {
         _id = id;
     }

@@ -1,4 +1,4 @@
-using Hexagonal_Refactoring.Repositories.Contexts;
+using Hexagonal_Refactoring.Infrastructure.Contexts;
 using Hexagonal_Refactoring.Util;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +16,6 @@ builder.Services.AddDbContext<EventContext>(opt =>
 });
 
 builder.Services.AddRepositories();
-builder.Services.AddServices();
 builder.Services.AddUseCases();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));

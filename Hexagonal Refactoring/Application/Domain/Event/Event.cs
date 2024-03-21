@@ -1,4 +1,5 @@
-﻿using Hexagonal_Refactoring.Application.Domain.Customer;
+﻿using System.Globalization;
+using Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.Domain.Partner;
 
 namespace Hexagonal_Refactoring.Application.Domain.Event;
@@ -21,10 +22,16 @@ public class Event
     public DateTime Date { get; private set; }
     public int TotalSpots { get; }
     public PartnerId PartnerId { get; private set; }
-    public HashSet<EventTicket> Tickets { get; } = [];
+    public HashSet<EventTicket> Tickets { get; private init; } = [];
 
     public static Event NewEvent(string name, string date, int totalSpots, PartnerId partnerId) =>
         new(EventId.NewId(), name, date, totalSpots, partnerId);
+
+    public static Event Restore(EventId eventId, string name, DateTime date, int totalSpots, PartnerId partnerId, IEnumerable<EventTicket> eventTickets) =>
+        new(eventId, name, date.ToString(CultureInfo.InvariantCulture), totalSpots, partnerId)
+        {
+            Tickets = [..eventTickets]
+        };
 
     public Ticket.Ticket ReserveTicket(CustomerId customerId)
     {
@@ -40,4 +47,5 @@ public class Event
 
         return newTicket;
     }
+
 }

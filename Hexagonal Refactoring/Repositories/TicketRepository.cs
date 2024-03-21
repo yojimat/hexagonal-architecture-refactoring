@@ -1,6 +1,6 @@
-﻿using Hexagonal_Refactoring.Models;
+﻿using Hexagonal_Refactoring.Infrastructure.Contexts;
+using Hexagonal_Refactoring.Models;
 using Hexagonal_Refactoring.Models.DbModels;
-using Hexagonal_Refactoring.Repositories.Contexts;
 
 namespace Hexagonal_Refactoring.Repositories;
 

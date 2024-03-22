@@ -18,8 +18,6 @@ builder.Services.AddDbContext<EventContext>(opt =>
 builder.Services.AddRepositories();
 builder.Services.AddUseCases();
 
-builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,7 +35,7 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<EventContext>();
-    //context.Database.EnsureDeleted(); // Uncomment to reset local database
+    context.Database.EnsureDeleted(); // Uncomment to reset local database
     context.Database.EnsureCreated();
 }
 

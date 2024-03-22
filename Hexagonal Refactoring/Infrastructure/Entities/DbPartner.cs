@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Hexagonal_Refactoring.Application.Domain.Customer;
+using Hexagonal_Refactoring.Application.Domain;
+using Hexagonal_Refactoring.Application.Domain.Partner;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hexagonal_Refactoring.Infrastructure.Entities;
 
-[Table("Customers")]
+[Table("Partners")]
 [PrimaryKey("Id")]
-public class DbCustomer(string name, string cpf, string email)  
+public class DbPartner(string name, string cnpj, string email)
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; init; }
@@ -15,14 +16,13 @@ public class DbCustomer(string name, string cpf, string email)
     public string Name { get; init; } = name;
 
     [Column(TypeName = "varchar(100)")]
-    public string Cpf { get; init; } = cpf;
+    public string Cnpj { get; init; } = cnpj;
 
     [Column(TypeName = "varchar(100)")]
     public string Email { get; init; } = email;
 
-    public static DbCustomer FromCustomer(Customer customer) =>
-       new(customer.Name, customer.Cpf, customer.Email.Value);
+    public static DbPartner FromPartner(Partner partner) => new(partner.Name,partner.Cnpj,partner.Email.Value);
 
-    public Customer ToCustomer() =>
-        Customer.Restore(new CustomerId(Id), Name, Cpf, Email);
+    public Partner ToPartner() =>
+        Partner.Restore(new PartnerId(Id), Name, Cnpj, new Email(Email));
 }

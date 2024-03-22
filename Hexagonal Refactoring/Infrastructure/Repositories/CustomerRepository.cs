@@ -8,11 +8,14 @@ namespace Hexagonal_Refactoring.Infrastructure.Repositories;
 
 public class CustomerRepository(EventContext eventContext) : ICustomerRepository
 {
-    public Customer? CustomerOfId(CustomerId id) => eventContext.Customers.AsNoTracking().SingleOrDefault(c => c.Id == id.Id)?.ToCustomer();
+    public Customer? CustomerOfId(CustomerId id) =>
+        eventContext.Customers.AsNoTracking().SingleOrDefault(c => c.Id == id.Id)?.ToCustomer();
 
-    public Customer? CustomerOfCpf(string cpf) => eventContext.Customers.AsNoTracking().FirstOrDefault(p => p.Cpf == cpf)?.ToCustomer();
+    public Customer? CustomerOfCpf(string cpf) =>
+        eventContext.Customers.AsNoTracking().FirstOrDefault(p => p.Cpf == cpf)?.ToCustomer();
 
-    public Customer? CustomerOfEmail(string email) => eventContext.Customers.FirstOrDefault(p => p.Email == email)?.ToCustomer();
+    public Customer? CustomerOfEmail(string email) =>
+        eventContext.Customers.FirstOrDefault(p => p.Email == email)?.ToCustomer();
 
     public Customer Create(Customer customer)
     {

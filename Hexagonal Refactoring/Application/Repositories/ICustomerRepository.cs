@@ -8,5 +8,4 @@ public interface ICustomerRepository
     Customer? CustomerOfCpf(string cpf);
     Customer? CustomerOfEmail(string email);
     Customer Create(Customer customer);
-    Customer Update(Customer customer);
 }

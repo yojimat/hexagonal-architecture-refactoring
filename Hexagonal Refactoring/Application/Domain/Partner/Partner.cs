@@ -24,6 +24,9 @@ public partial class Partner
     public static Partner NewPartner(string name, string cnpj, string email) =>
         new(PartnerId.NewId(), name, cnpj, new Email(email));
 
+    public static Partner Restore(PartnerId partnerId, string name, string cnpj, Email email) => new(partnerId,name,cnpj,email);
+
     [GeneratedRegex(@"(\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2})|(\d{14})$")]
     private static partial Regex CnpjValidation();
+
 }

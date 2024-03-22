@@ -1,6 +1,7 @@
 ﻿using Hexagonal_Refactoring.Application.Domain.Event;
 using Hexagonal_Refactoring.Application.Repositories;
 using Hexagonal_Refactoring.Infrastructure.Contexts;
+using Hexagonal_Refactoring.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using EventId = Hexagonal_Refactoring.Application.Domain.Event.EventId;
 
@@ -15,14 +16,9 @@ public class EventRepository(EventContext eventContext) : IEventRepository
 
     public Event Create(Event eEvent)
     {
-        var dbEvent = new DbEvent();
-        mapper.Map(entity, dbEvent);
-
-        dbEvent.PartnerId = entity.GetPartner().GetId();
-
-        var evnt = eventContext.Events.Add(dbEvent);
+        var newEvent = eventContext.Events.Add(DbEvent.FromEvent(eEvent));
         eventContext.SaveChanges();
-        return evnt.Entity;
+        return newEvent.Entity.ToEvent();
     }
 
     public Event Update(Event eEvent)

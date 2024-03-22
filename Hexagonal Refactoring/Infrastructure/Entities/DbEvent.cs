@@ -7,7 +7,7 @@ using EventId = Hexagonal_Refactoring.Application.Domain.Event.EventId;
 namespace Hexagonal_Refactoring.Infrastructure.Entities;
 
 [Table("Events")]
-[PrimaryKey("EventId")]
+[PrimaryKey("Id")]
 public class DbEvent(Guid partnerId, string name, DateTime date, int totalSpots)
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,13 +19,15 @@ public class DbEvent(Guid partnerId, string name, DateTime date, int totalSpots)
     public string Name { get; init; } = name;
     public DateTime Date { get; init; } = date;
     public int TotalSpots { get; init; } = totalSpots;
+
+    [ForeignKey("Id")]
     public List<DbEventTicket> Tickets { get; init; } = [];
 
     public static DbEvent FromEvent(Event eEvent)
     {
         var entity = new DbEvent(eEvent.PartnerId.Id, eEvent.Name, eEvent.Date, eEvent.TotalSpots);
         var ticketsList = eEvent.Tickets.ToList();
-        ticketsList.ForEach(t => entity.Tickets.Add(new DbEventTicket(t.CustomerId.Id, entity, t.Ordering)));
+        ticketsList.ForEach(t => entity.Tickets.Add(new DbEventTicket(t.CustomerId.Id, entity.Id, t.Ordering)));
         return entity;
     }
 

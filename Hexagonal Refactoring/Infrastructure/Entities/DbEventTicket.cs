@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.Domain.Event;
 using Hexagonal_Refactoring.Application.Domain.Event.Ticket;
@@ -8,15 +7,17 @@ using EventId = Hexagonal_Refactoring.Application.Domain.Event.EventId;
 
 namespace Hexagonal_Refactoring.Infrastructure.Entities;
 
-[Table("Events")]
-[PrimaryKey("EventTicketId")]
-public class DbEventTicket(Guid customerId, DbEvent eEvent, int ordering)
+[Table("EventTickets")]
+[PrimaryKey("Id")]
+public class DbEventTicket(Guid customerId, Guid eventId, int ordering)
 {
     public Guid Id { get; init; }
+
+    public Guid TicketId { get; init; }
     public Guid CustomerId { get; init; } = customerId;
-    public Guid EventId { get; init; } = eEvent.Id;
-    public DbEvent Event { get; init; } = eEvent;
+    public Guid EventId { get; init; } = eventId;
+
     public int Ordering { get; init; } = ordering;
 
-    public EventTicket ToEventTicket() => new(new TicketId(Id), new EventId(EventId), new CustomerId(CustomerId), Ordering);
+    public EventTicket ToEventTicket() => new(new TicketId(TicketId), new EventId(EventId), new CustomerId(CustomerId), Ordering);
 }

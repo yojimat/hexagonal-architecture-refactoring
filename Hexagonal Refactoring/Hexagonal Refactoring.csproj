@@ -17,10 +17,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Infrastructure\Repositories\CustomerRepository\" />
-    <Folder Include="Infrastructure\Repositories\EventRepository\" />
-    <Folder Include="Infrastructure\Repositories\Ticket\" />
-    <Folder Include="Infrastructure\Repositories\Partner\" />
-  </ItemGroup>
 </Project>

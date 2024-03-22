@@ -11,6 +11,16 @@ public class Ticket
         EventId = eventId;
     }
 
+    private Ticket(TicketId ticketId, CustomerId customerId, EventId eventId, TicketStatus status, DateTime? paidAt, DateTime reservedAt)
+    {
+        TicketId = ticketId;
+        CustomerId = customerId;
+        EventId = eventId;
+        Status = status;
+        PaidAt = paidAt;
+        ReservedAt = reservedAt;
+    }
+
     public TicketId TicketId { get; private set; }
     public CustomerId CustomerId { get; private set; }
     public EventId EventId { get; private set; }
@@ -20,4 +30,7 @@ public class Ticket
 
     public static Ticket NewTicket(CustomerId customerId, EventId eventId) =>
         new(TicketId.NewId(), customerId, eventId);
+
+    public static Ticket Restore(Guid id, Guid customerId, Guid eventId, TicketStatus status, DateTime? paidAt, DateTime reservedAt) => 
+        new(new TicketId(id), new CustomerId(customerId), new EventId(eventId), status, paidAt, reservedAt);
 }

@@ -1,5 +1,4 @@
 ﻿using Hexagonal_Refactoring.Infrastructure.Entities;
-using Hexagonal_Refactoring.Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hexagonal_Refactoring.Infrastructure.Contexts;

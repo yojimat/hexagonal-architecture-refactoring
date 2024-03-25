@@ -36,9 +36,9 @@ public class EventController(
     {
         try
         {
-            subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(dto.CustomerId, id));
+            var output = subscribeCustomerToEventUseCase.Execute(new SubscribeCustomerToEventUseCase.Input(dto.CustomerId, id));
 
-            return Ok();
+            return Ok(output);
         }
         catch (ValidationException ex)
         {

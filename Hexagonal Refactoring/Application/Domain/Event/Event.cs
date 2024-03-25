@@ -12,8 +12,8 @@ public class Event
     {
         Name = name ?? throw new ArgumentException("Invalid Name for customer");
         EventId = eventId ?? throw new ArgumentException("Invalid id for event");
-        Date = DateTime.Parse(date);
         TotalSpots = totalSpots;
+        Date = DateTime.Parse(date);
         PartnerId = partnerId;
     }
 
@@ -28,7 +28,7 @@ public class Event
         new(EventId.NewId(), name, date, totalSpots, partnerId);
 
     public static Event Restore(EventId eventId, string name, DateTime date, int totalSpots, PartnerId partnerId, IEnumerable<EventTicket> eventTickets) =>
-        new(eventId, name, date.ToString(CultureInfo.InvariantCulture), totalSpots, partnerId)
+        new(eventId, name, date.ToShortDateString(), totalSpots, partnerId)
         {
             Tickets = [..eventTickets]
         };

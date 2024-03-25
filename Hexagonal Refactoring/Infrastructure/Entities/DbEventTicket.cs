@@ -9,11 +9,11 @@ namespace Hexagonal_Refactoring.Infrastructure.Entities;
 
 [Table("EventTickets")]
 [PrimaryKey("Id")]
-public class DbEventTicket(Guid customerId, Guid eventId, int ordering)
+public class DbEventTicket(Guid ticketId, Guid customerId, Guid eventId, int ordering)
 {
     public Guid Id { get; init; }
 
-    public Guid TicketId { get; init; }
+    public Guid TicketId { get; init; } = ticketId;
     public Guid CustomerId { get; init; } = customerId;
     public Guid EventId { get; init; } = eventId;
 

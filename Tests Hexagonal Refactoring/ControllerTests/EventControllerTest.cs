@@ -89,7 +89,7 @@ public class EventControllerTest
 
         // Act
         var result = eventController.Subscribe(eventOutput?.EventId ?? throw new ArgumentException(), subDto);
-        var exeResult = result as OkResult;
+        var exeResult = result as OkObjectResult;
 
         // Assert
         Assert.NotNull(exeResult);

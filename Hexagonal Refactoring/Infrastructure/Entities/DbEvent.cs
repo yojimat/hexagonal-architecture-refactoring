@@ -27,7 +27,7 @@ public class DbEvent(Guid partnerId, string name, DateTime date, int totalSpots)
     {
         var entity = new DbEvent(eEvent.PartnerId.Id, eEvent.Name, eEvent.Date, eEvent.TotalSpots);
         var ticketsList = eEvent.Tickets.ToList();
-        ticketsList.ForEach(t => entity.Tickets.Add(new DbEventTicket(t.CustomerId.Id, entity.Id, t.Ordering)));
+        ticketsList.ForEach(t => entity.Tickets.Add(new DbEventTicket(t.TicketId.Id, t.CustomerId.Id, entity.Id, t.Ordering)));
         return entity;
     }
 

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Hexagonal_Refactoring.Application.Domain.Customer;
 using Hexagonal_Refactoring.Application.Domain.Event;
 using Hexagonal_Refactoring.Application.Domain.Event.Ticket;
 using Microsoft.EntityFrameworkCore;

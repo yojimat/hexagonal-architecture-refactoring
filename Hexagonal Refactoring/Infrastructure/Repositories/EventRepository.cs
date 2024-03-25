@@ -1,4 +1,5 @@
 ﻿using Hexagonal_Refactoring.Application.Domain.Event;
+using Hexagonal_Refactoring.Application.Domain.Event.Ticket;
 using Hexagonal_Refactoring.Application.Repositories;
 using Hexagonal_Refactoring.Infrastructure.Contexts;
 using Hexagonal_Refactoring.Infrastructure.Entities;
@@ -23,6 +24,11 @@ public class EventRepository(EventContext eventContext) : IEventRepository
 
     public Event Update(Event eEvent)
     {
-        throw new NotImplementedException();
+        var foundEvent = eventContext.Events.Single(e => e.Id == eEvent.EventId.Id);
+        foundEvent.Tickets.AddRange(eEvent.Tickets.Select(t => 
+            new DbEventTicket(t.TicketId.Id, t.CustomerId.Id, t.EventId.Id, t.Ordering)));
+        var updatedEvent = eventContext.Events.Update(foundEvent);
+        eventContext.SaveChanges();
+        return updatedEvent.Entity.ToEvent();
     }
 }

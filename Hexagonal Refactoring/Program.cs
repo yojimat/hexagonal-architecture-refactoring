@@ -35,7 +35,7 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<EventContext>();
-    context.Database.EnsureDeleted(); // Uncomment to reset local database
+    context.Database.EnsureDeleted(); // reset local database
     context.Database.EnsureCreated();
 }
 
@@ -45,4 +45,4 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program { } // This for the integration tests to use.
+public partial class Program;  // This for the integration tests to use.
